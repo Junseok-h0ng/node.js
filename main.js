@@ -79,7 +79,7 @@ var app = http.createServer((req, res) => {
         fs.readdir(`./data`, function (err, filelist) {
             fs.readFile(`./data/${title}`, 'utf8', function (err, description) {
                 var description = `
-                <form action="./create_process" method="POST">
+                <form action="./update_process" method="POST">
                     <p><input type="hidden" name="id" value="${title}"></p>
                     <p><input type="text" placeholder="title" value ="${title}" name="title"></p>
                     <p><textarea placeholder="description" name="description">${description}</textarea></p>
@@ -108,8 +108,20 @@ var app = http.createServer((req, res) => {
                     res.writeHead(302, { Location: `/?id=${title}` });
                     res.end();
                 });
-            })
-
+            });
+        });
+    } else if (pathname === '/delete_process') {
+        var body = '';
+        req.on('data', function (data) {
+            body = body + data;
+        });
+        req.on('end', function () {
+            var post = qs.parse(body);
+            var id = post.id;
+            fs.unlink(`./data/${id}`, function () {
+                res.writeHead(302, { Location: `/` });
+                res.end();
+            });
         });
     } else {
         res.writeHead(404);
