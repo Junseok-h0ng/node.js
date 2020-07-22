@@ -26,7 +26,7 @@ app.get('/', function (req, res) {
     res.send(printHTML);
 });
 //page 출력
-app.get(`/page/:pageID`, function (req, res) {
+app.get(`/page/:pageID`, function (req, res, next) {
     var title = req.params.pageID;
     var control =
         `<ul>
@@ -37,21 +37,29 @@ app.get(`/page/:pageID`, function (req, res) {
                     <input type="submit" value="delete">
                 </form>
             </ul>`;
+
     fs.readFile(`data/${title}`, 'utf8', function (err, description) {
-        var printHTML = template.html(title, req.list, description, control);
-        res.send(printHTML);
+        if (err) {
+            next(err);
+        } else {
+
+            var printHTML = template.html(title, req.list, description, control);
+            res.send(printHTML);
+        }
     });
+
 });
 //생성 폼
 app.get(`/create`, function (req, res) {
     var title = "createPage";
-    var description =
-        `<form action="./create_process" method="POST">
-            <p><input type="text" placeholder="title" name="title"></p>
-            <p><textarea placeholder="description" name="description"></textarea></p>
-            <p><input type="submit"></p>
-        </form>`;
-    var printHTML = template.html(title, req.list, description, '');
+    var description = `
+    <form action="./create_process" method="POST">
+        <input type="text" placeholder="title" name="title">
+        <textarea id="editor" name="description"></textarea>
+        <input type="submit">
+    </form>
+    <input type="button" value="back" onclick="window.history.back()"></input>`;
+    var printHTML = template.create(title, description);
     res.send(printHTML);
 });
 //생성 작업
@@ -67,14 +75,15 @@ app.post(`/create_process`, function (req, res) {
 app.get(`/update/:pageID`, function (req, res) {
     var title = req.params.pageID;
     fs.readFile(`data/${title}`, 'utf8', function (err, data) {
-        var description =
-            `<form action="/update_process" method="POST">
-                <p><input type="hidden" name="id" value="${title}"></p>
-                <p><input type="text" placeholder="title" name="title" value="${title}"></p>
-                <p><textarea placeholder="description" name="description">${data}</textarea></p>
-                <p><input type="submit"></p>
-            </form>`;
-        var printHTML = template.html(title, req.list, description, '');
+        var description = `
+        <form action="/update_process" method="POST">
+            <input type="hidden" value="${title}">
+            <input type="text" placeholder="title" name="title" value="${title}">
+            <textarea id="editor" name="description">${data}</textarea>
+            <input type="submit">
+        </form>
+        <input type="button" value="back" onclick="window.history.back()"></input>`;
+        var printHTML = template.create(title, description);
         res.send(printHTML);
     });
 });
@@ -90,6 +99,7 @@ app.post(`/update_process`, function (req, res) {
         });
     });
 });
+//삭제 작업
 app.post(`/delete_process`, function (req, res) {
     var post = req.body;
     var id = post.id;
@@ -97,6 +107,14 @@ app.post(`/delete_process`, function (req, res) {
         res.redirect(`/`);
     });
 });
+
+app.use(function (req, res, next) {
+    res.status(404).send('Sorry cant find that!');
+});
+app.use(function (err, req, res, next) {
+    res.status(500).send("파일 없음");
+})
+app.listen(8000);
 
 // app = http.createServer((req, res) => {
 //     var _url = req.url;
@@ -224,4 +242,3 @@ app.post(`/delete_process`, function (req, res) {
 
 
 // });
-app.listen(8000);
