@@ -5,11 +5,24 @@ const qs = require('querystring');
 const template = require('./lib/template.js');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookie = require('cookie');
+const cookieParser = require('cookie-parser');
 var app = express();
 
+app.use(cookieParser());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 
+
+function authIsOwner(req) {
+    var isOwner = false;
+    var id = req.cookies.id;
+    var password = req.cookies.password;
+    if (id === "wnstjr" && password === "1234") {
+        isOwner = true;
+    }
+    return isOwner;
+}
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
@@ -22,8 +35,10 @@ app.get('*', function (req, res, next) {
 app.get('/', function (req, res) {
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
-    var printHTML = template.html(title, req.list, description, '');
+    var printHTML = template.html(title, req.list, description, '', authIsOwner(req));
+
     res.send(printHTML);
+
 });
 //page 출력
 app.get(`/page/:pageID`, function (req, res, next) {
@@ -43,7 +58,7 @@ app.get(`/page/:pageID`, function (req, res, next) {
             next(err);
         } else {
 
-            var printHTML = template.html(title, req.list, description, control);
+            var printHTML = template.html(title, req.list, description, control, authIsOwner(req));
             res.send(printHTML);
         }
     });
@@ -106,6 +121,29 @@ app.post(`/delete_process`, function (req, res) {
     fs.unlink(`data/${id}`, function (err) {
         res.redirect(`/`);
     });
+});
+app.get(`/login`, function (req, res) {
+    var title = "Login";
+    var description = `
+        <form action = "/login_process" method = "post">
+            <input type="text" placeholder="id" name ="id">
+            <input type="password" placeholder="password" name="password">
+            <input type="submit">
+        </form>
+    `;
+    var printHTML = template.html(title, req.list, description, "", '');
+    res.send(printHTML);
+});
+app.post(`/login_process`, function (req, res) {
+    var post = req.body;
+    res.cookie('id', `${post.id}`);
+    res.cookie('password', `${post.password}`);
+    res.redirect('/');
+});
+app.get(`/logout_process`, function (req, res) {
+    res.clearCookie('id');
+    res.clearCookie('password');
+    res.redirect('/');
 });
 
 app.use(function (req, res, next) {
