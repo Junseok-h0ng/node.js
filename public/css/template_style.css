@@ -18,6 +18,9 @@ li{
     display:inline-block;
     margin-left:5px;
 }
+li ul{
+    padding-left:80px;
+}
 #content_container{
     width:100%;
     height:500px;

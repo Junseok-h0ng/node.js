@@ -7,22 +7,31 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookie = require('cookie');
 const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const FileStore = require('session-file-store')(session);
 var app = express();
 
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(session({
+    secret: 'asdfagasg',
+    resave: false,
+    saveUninitialized: true,
+    store: new FileStore()
+}));
 
-
-function authIsOwner(req) {
+function authIsOwner(user) {
     var isOwner = false;
-    var id = req.cookies.id;
-    var password = req.cookies.password;
-    if (id === "wnstjr" && password === "1234") {
-        isOwner = true;
+    if (user != undefined) {
+        if (user.id === "wnstjr" && user.password === "1234") {
+            isOwner = true;
+        }
     }
     return isOwner;
 }
+
+
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
@@ -35,10 +44,8 @@ app.get('*', function (req, res, next) {
 app.get('/', function (req, res) {
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
-    var printHTML = template.html(title, req.list, description, '', authIsOwner(req));
-
+    var printHTML = template.html(title, req.list, description, '', authIsOwner(req.session.user));
     res.send(printHTML);
-
 });
 //page 출력
 app.get(`/page/:pageID`, function (req, res, next) {
@@ -57,8 +64,7 @@ app.get(`/page/:pageID`, function (req, res, next) {
         if (err) {
             next(err);
         } else {
-
-            var printHTML = template.html(title, req.list, description, control, authIsOwner(req));
+            var printHTML = template.html(title, req.list, description, control, authIsOwner(req.session.user));
             res.send(printHTML);
         }
     });
@@ -66,16 +72,21 @@ app.get(`/page/:pageID`, function (req, res, next) {
 });
 //생성 폼
 app.get(`/create`, function (req, res) {
-    var title = "createPage";
-    var description = `
-    <form action="./create_process" method="POST">
-        <input type="text" placeholder="title" name="title">
-        <textarea id="editor" name="description"></textarea>
-        <input type="submit">
-    </form>
-    <input type="button" value="back" onclick="window.history.back()"></input>`;
-    var printHTML = template.create(title, description);
-    res.send(printHTML);
+    if (authIsOwner(req.session.user)) {
+        var title = "createPage";
+        var description = `
+        <form action="./create_process" method="POST">
+            <input type="text" placeholder="title" name="title">
+            <textarea id="editor" name="description"></textarea>
+            <input type="submit">
+        </form>
+        <input type="button" value="back" onclick="window.history.back()"></input>`;
+        var printHTML = template.create(title, description);
+        res.send(printHTML);
+    } else {
+        res.redirect(`/login`);
+    }
+
 });
 //생성 작업
 app.post(`/create_process`, function (req, res) {
@@ -88,19 +99,24 @@ app.post(`/create_process`, function (req, res) {
 });
 //수정 폼
 app.get(`/update/:pageID`, function (req, res) {
-    var title = req.params.pageID;
-    fs.readFile(`data/${title}`, 'utf8', function (err, data) {
-        var description = `
-        <form action="/update_process" method="POST">
-            <input type="hidden" value="${title}">
-            <input type="text" placeholder="title" name="title" value="${title}">
-            <textarea id="editor" name="description">${data}</textarea>
-            <input type="submit">
-        </form>
-        <input type="button" value="back" onclick="window.history.back()"></input>`;
-        var printHTML = template.create(title, description);
-        res.send(printHTML);
-    });
+    if (authIsOwner(req.session.user)) {
+        var title = req.params.pageID;
+        fs.readFile(`data/${title}`, 'utf8', function (err, data) {
+            var description = `
+            <form action="/update_process" method="POST">
+                <input type="hidden" name="id"value="${title}">
+                <input type="text" placeholder="title" name="title" value="${title}">
+                <textarea id="editor" name="description">${data}</textarea>
+                <input type="submit">
+            </form>
+            <input type="button" value="back" onclick="window.history.back()"></input>`;
+            var printHTML = template.create(title, description);
+            res.send(printHTML);
+        });
+    } else {
+        res.redirect(`/login`);
+    }
+
 });
 //수정 작업
 app.post(`/update_process`, function (req, res) {
@@ -116,33 +132,41 @@ app.post(`/update_process`, function (req, res) {
 });
 //삭제 작업
 app.post(`/delete_process`, function (req, res) {
-    var post = req.body;
-    var id = post.id;
-    fs.unlink(`data/${id}`, function (err) {
-        res.redirect(`/`);
-    });
+    if (authIsOwner(req.session.user)) {
+        var post = req.body;
+        var id = post.id;
+        fs.unlink(`data/${id}`, function (err) {
+            res.redirect(`/`);
+        });
+    } else {
+        res.redirect(`/login`);
+    }
+
 });
 app.get(`/login`, function (req, res) {
-    var title = "Login";
+    var title = 'login';
     var description = `
-        <form action = "/login_process" method = "post">
-            <input type="text" placeholder="id" name ="id">
-            <input type="password" placeholder="password" name="password">
-            <input type="submit">
-        </form>
-    `;
+            <form action = "/login_process" method = "post">
+                <input type="text" placeholder="id" name ="id">
+                <input type="password" placeholder="password" name="password">
+                <input type="submit">
+            </form>
+        `;
     var printHTML = template.html(title, req.list, description, "", '');
     res.send(printHTML);
 });
 app.post(`/login_process`, function (req, res) {
     var post = req.body;
-    res.cookie('id', `${post.id}`);
-    res.cookie('password', `${post.password}`);
-    res.redirect('/');
+    req.session.user = {
+        "id": post.id,
+        "password": post.password
+    }
+    res.redirect(`/`);
 });
 app.get(`/logout_process`, function (req, res) {
-    res.clearCookie('id');
-    res.clearCookie('password');
+    req.session.destroy(function () {
+        req.session.user;
+    });
     res.redirect('/');
 });
 
