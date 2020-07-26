@@ -21,18 +21,77 @@ app.use(session({
     store: new FileStore()
 }));
 
+var authData = {
+    id: 'wnstjr',
+    pwd: '1234',
+    nickname: 'js'
+}
+
+const passport = require('passport')
+    , LocalStrategy = require('passport-local').Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+//passport session 처리
+passport.serializeUser(function (user, done) {
+    console.log('serializeUser', user);
+    done(null, user.id);
+});
+passport.deserializeUser(function (id, done) {
+    console.log('deserializeUser', id);
+    done(null, authData);
+    // User.findById(id, function (err, user) {
+    //     done(err, user);
+    // });
+});
+
+//passport 로그인 접근
+passport.use(new LocalStrategy(
+    {
+        usernameField: 'id',
+        passwordField: 'pwd'
+    },
+    function (username, password, done) {
+        console.log('Localstrategy', username, password);
+        if (username === authData.id) {
+            console.log(1);
+            if (password === authData.pwd) {
+                console.log(2);
+                return done(null, authData);
+            } else {
+                console.log(3);
+                return done(null, false, {
+                    message: 'Incorrect password.'
+                });
+            }
+        } else {
+            console.log(4);
+            return done(null, false, {
+                message: 'Incorrect username.'
+            });
+        }
+    }
+
+));
+
+
+//passport 로그인 처리
+app.post(`/login_process`,
+    passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }));
+//로그인 여부확인
 function authIsOwner(user) {
     var isOwner = false;
     if (user != undefined) {
-        if (user.id === "wnstjr" && user.password === "1234") {
+        if (user.id === authData.id && user.pwd === authData.pwd) {
             isOwner = true;
         }
     }
     return isOwner;
 }
-
-
-
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     fs.readdir(`./data`, function (err, filelist) {
@@ -143,33 +202,36 @@ app.post(`/delete_process`, function (req, res) {
     }
 
 });
+//로그인 폼
 app.get(`/login`, function (req, res) {
     var title = 'login';
     var description = `
             <form action = "/login_process" method = "post">
                 <input type="text" placeholder="id" name ="id">
-                <input type="password" placeholder="password" name="password">
+                <input type="password" placeholder="password" name="pwd">
                 <input type="submit">
             </form>
         `;
     var printHTML = template.html(title, req.list, description, "", '');
     res.send(printHTML);
 });
+//로그인 작업
 app.post(`/login_process`, function (req, res) {
     var post = req.body;
     req.session.user = {
         "id": post.id,
-        "password": post.password
+        "pwd": post.password
     }
+    req.session.save();
     res.redirect(`/`);
 });
 app.get(`/logout_process`, function (req, res) {
-    req.session.destroy(function () {
-        req.session.user;
+    req.session.destroy(function (err) {
+        res.redirect('/');
     });
-    res.redirect('/');
 });
 
+//에러처리
 app.use(function (req, res, next) {
     res.status(404).send('Sorry cant find that!');
 });
