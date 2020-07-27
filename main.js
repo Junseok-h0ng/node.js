@@ -6,10 +6,10 @@ const template = require('./lib/template.js');
 const auth = require('./lib/auth.js');
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookie = require('cookie');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const flash = require('connect-flash');
 var app = express();
 
 app.use(cookieParser());
@@ -21,6 +21,7 @@ app.use(session({
     saveUninitialized: true,
     store: new FileStore()
 }));
+app.use(flash());
 
 var authData = {
     id: 'wnstjr',
@@ -44,7 +45,6 @@ passport.deserializeUser(function (id, done) {
     console.log('deserializeUser', id);
     done(null, authData);
 });
-
 //passport 로그인 접근
 passport.use(new LocalStrategy(
     {
@@ -77,9 +77,15 @@ passport.use(new LocalStrategy(
 app.post(`/login_process`,
     passport.authenticate('local', {
         successRedirect: '/',
-        failureRedirect: '/login'
+        failureRedirect: '/login',
+        failureFlash: true
     }));
-
+app.get(`/logout`, function (req, res) {
+    req.logout();
+    req.session.save(function () {
+        res.redirect('/');
+    });
+});
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     fs.readdir(`./data`, function (err, filelist) {
@@ -194,7 +200,13 @@ app.post(`/delete_process`, function (req, res) {
 //로그인 폼
 app.get(`/login`, function (req, res) {
     var title = 'login';
+    var fflash = req.flash();
+    var feedback = '';
+    if (fflash.error) {
+        feedback = fflash.error[0];
+    }
     var description = `
+            <h1 style = "color:red">${feedback}</h1>
             <form action = "/login_process" method = "post">
                 <input type="text" placeholder="id" name ="id">
                 <input type="password" placeholder="password" name="pwd">
@@ -204,22 +216,6 @@ app.get(`/login`, function (req, res) {
     var printHTML = template.html(title, req.list, description, "", '');
     res.send(printHTML);
 });
-//로그인 작업
-app.post(`/login_process`, function (req, res) {
-    var post = req.body;
-    req.session.user = {
-        "id": post.id,
-        "pwd": post.password
-    }
-    req.session.save();
-    res.redirect(`/`);
-});
-app.get(`/logout_process`, function (req, res) {
-    req.session.destroy(function (err) {
-        res.redirect('/');
-    });
-});
-
 //에러처리
 app.use(function (req, res, next) {
     res.status(404).send('Sorry cant find that!');
