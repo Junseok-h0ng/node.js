@@ -23,69 +23,9 @@ app.use(session({
 }));
 app.use(flash());
 
-var authData = {
-    id: 'wnstjr',
-    pwd: '1234',
-    nickname: 'js'
-}
+//passport 실행
+require('./lib/passport.js')(app);
 
-const passport = require('passport')
-    , LocalStrategy = require('passport-local').Strategy;
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-//passport session 초기 실행
-passport.serializeUser(function (user, done) {
-    console.log('serializeUser', user);
-    done(null, user.id);
-});
-//passport session 재접속시 실행
-passport.deserializeUser(function (id, done) {
-    console.log('deserializeUser', id);
-    done(null, authData);
-});
-//passport 로그인 접근
-passport.use(new LocalStrategy(
-    {
-        usernameField: 'id',
-        passwordField: 'pwd'
-    },
-    function (username, password, done) {
-        console.log('Localstrategy', username, password);
-        if (username === authData.id) {
-            console.log(1);
-            if (password === authData.pwd) {
-                console.log(2);
-                return done(null, authData);
-            } else {
-                console.log(3);
-                return done(null, false, {
-                    message: 'Incorrect password.'
-                });
-            }
-        } else {
-            console.log(4);
-            return done(null, false, {
-                message: 'Incorrect username.'
-            });
-        }
-    }
-
-));
-//passport 로그인 처리
-app.post(`/login_process`,
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-        failureFlash: true
-    }));
-app.get(`/logout`, function (req, res) {
-    req.logout();
-    req.session.save(function () {
-        res.redirect('/');
-    });
-});
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     fs.readdir(`./data`, function (err, filelist) {
@@ -113,7 +53,6 @@ app.get(`/page/:pageID`, function (req, res, next) {
                     <input type="submit" value="delete">
                 </form>
             </ul>`;
-
     fs.readFile(`data/${title}`, 'utf8', function (err, description) {
         if (err) {
             next(err);
@@ -126,7 +65,7 @@ app.get(`/page/:pageID`, function (req, res, next) {
 });
 //생성 폼
 app.get(`/create`, function (req, res) {
-    if (authIsOwner(req.session.user)) {
+    if (auth.authIsOwner(req)) {
         var title = "createPage";
         var description = `
         <form action="./create_process" method="POST">
@@ -138,9 +77,9 @@ app.get(`/create`, function (req, res) {
         var printHTML = template.create(title, description);
         res.send(printHTML);
     } else {
+        req.flash('error', 'need login');
         res.redirect(`/login`);
     }
-
 });
 //생성 작업
 app.post(`/create_process`, function (req, res) {
@@ -153,7 +92,7 @@ app.post(`/create_process`, function (req, res) {
 });
 //수정 폼
 app.get(`/update/:pageID`, function (req, res) {
-    if (authIsOwner(req.session.user)) {
+    if (auth.authIsOwner(req)) {
         var title = req.params.pageID;
         fs.readFile(`data/${title}`, 'utf8', function (err, data) {
             var description = `
@@ -168,6 +107,7 @@ app.get(`/update/:pageID`, function (req, res) {
             res.send(printHTML);
         });
     } else {
+        req.flash('error', 'need login');
         res.redirect(`/login`);
     }
 
@@ -186,13 +126,14 @@ app.post(`/update_process`, function (req, res) {
 });
 //삭제 작업
 app.post(`/delete_process`, function (req, res) {
-    if (authIsOwner(req.session.user)) {
+    if (auth.authIsOwner(req)) {
         var post = req.body;
         var id = post.id;
         fs.unlink(`data/${id}`, function (err) {
             res.redirect(`/`);
         });
     } else {
+        req.flash('error', 'need login');
         res.redirect(`/login`);
     }
 
