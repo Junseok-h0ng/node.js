@@ -3,6 +3,7 @@ const url = require('url');
 const fs = require('fs');
 const qs = require('querystring');
 const template = require('./lib/template.js');
+const auth = require('./lib/auth.js');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookie = require('cookie');
@@ -33,17 +34,15 @@ const passport = require('passport')
 app.use(passport.initialize());
 app.use(passport.session());
 
-//passport session 처리
+//passport session 초기 실행
 passport.serializeUser(function (user, done) {
     console.log('serializeUser', user);
     done(null, user.id);
 });
+//passport session 재접속시 실행
 passport.deserializeUser(function (id, done) {
     console.log('deserializeUser', id);
     done(null, authData);
-    // User.findById(id, function (err, user) {
-    //     done(err, user);
-    // });
 });
 
 //passport 로그인 접근
@@ -74,24 +73,13 @@ passport.use(new LocalStrategy(
     }
 
 ));
-
-
 //passport 로그인 처리
 app.post(`/login_process`,
     passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: '/login'
     }));
-//로그인 여부확인
-function authIsOwner(user) {
-    var isOwner = false;
-    if (user != undefined) {
-        if (user.id === authData.id && user.pwd === authData.pwd) {
-            isOwner = true;
-        }
-    }
-    return isOwner;
-}
+
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     fs.readdir(`./data`, function (err, filelist) {
@@ -101,9 +89,10 @@ app.get('*', function (req, res, next) {
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
+    console.log(req.user);
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
-    var printHTML = template.html(title, req.list, description, '', authIsOwner(req.session.user));
+    var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
 });
 //page 출력
@@ -123,7 +112,7 @@ app.get(`/page/:pageID`, function (req, res, next) {
         if (err) {
             next(err);
         } else {
-            var printHTML = template.html(title, req.list, description, control, authIsOwner(req.session.user));
+            var printHTML = template.html(title, req.list, description, control, auth.loginStatus(req));
             res.send(printHTML);
         }
     });
