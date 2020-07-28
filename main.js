@@ -1,7 +1,4 @@
-const http = require('http');
-const url = require('url');
 const fs = require('fs');
-const qs = require('querystring');
 const template = require('./lib/template.js');
 const auth = require('./lib/auth.js');
 const express = require('express');
@@ -25,6 +22,8 @@ app.use(flash());
 
 //passport 실행
 require('./lib/passport.js')(app);
+//페이지 라우터
+const pageRouter = require('./router/page');
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
@@ -35,128 +34,14 @@ app.get('*', function (req, res, next) {
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
-    console.log(req.user);
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
     var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
 });
-//page 출력
-app.get(`/page/:pageID`, function (req, res, next) {
-    var title = req.params.pageID;
-    var control =
-        `<ul>
-                <li><a href="/create">create</a></li>
-                <li><a href="/update/${title}">update</a></li>
-                <form action ="/delete_process" method="post">
-                    <input type="hidden" name="id" value="${title}">
-                    <input type="submit" value="delete">
-                </form>
-            </ul>`;
-    fs.readFile(`data/${title}`, 'utf8', function (err, description) {
-        if (err) {
-            next(err);
-        } else {
-            var printHTML = template.html(title, req.list, description, control, auth.loginStatus(req));
-            res.send(printHTML);
-        }
-    });
 
-});
-//생성 폼
-app.get(`/create`, function (req, res) {
-    if (auth.authIsOwner(req)) {
-        var title = "createPage";
-        var description = `
-        <form action="./create_process" method="POST">
-            <input type="text" placeholder="title" name="title">
-            <textarea id="editor" name="description"></textarea>
-            <input type="submit">
-        </form>
-        <input type="button" value="back" onclick="window.history.back()"></input>`;
-        var printHTML = template.create(title, description);
-        res.send(printHTML);
-    } else {
-        req.flash('error', 'need login');
-        res.redirect(`/login`);
-    }
-});
-//생성 작업
-app.post(`/create_process`, function (req, res) {
-    var post = req.body;
-    var title = post.title;
-    var description = post.description;
-    fs.writeFile(`data/${title}`, description, 'utf8', function (err) {
-        res.redirect(`/page/${title}`);
-    });
-});
-//수정 폼
-app.get(`/update/:pageID`, function (req, res) {
-    if (auth.authIsOwner(req)) {
-        var title = req.params.pageID;
-        fs.readFile(`data/${title}`, 'utf8', function (err, data) {
-            var description = `
-            <form action="/update_process" method="POST">
-                <input type="hidden" name="id"value="${title}">
-                <input type="text" placeholder="title" name="title" value="${title}">
-                <textarea id="editor" name="description">${data}</textarea>
-                <input type="submit">
-            </form>
-            <input type="button" value="back" onclick="window.history.back()"></input>`;
-            var printHTML = template.create(title, description);
-            res.send(printHTML);
-        });
-    } else {
-        req.flash('error', 'need login');
-        res.redirect(`/login`);
-    }
+app.use('/page', pageRouter);
 
-});
-//수정 작업
-app.post(`/update_process`, function (req, res) {
-    var post = req.body;
-    var id = post.id;
-    var title = post.title;
-    var description = post.description;
-    fs.rename(`data/${id}`, `data/${title}`, function () {
-        fs.writeFile(`data/${title}`, description, 'utf8', function () {
-            res.redirect(`page/${title}`);
-        });
-    });
-});
-//삭제 작업
-app.post(`/delete_process`, function (req, res) {
-    if (auth.authIsOwner(req)) {
-        var post = req.body;
-        var id = post.id;
-        fs.unlink(`data/${id}`, function (err) {
-            res.redirect(`/`);
-        });
-    } else {
-        req.flash('error', 'need login');
-        res.redirect(`/login`);
-    }
-
-});
-//로그인 폼
-app.get(`/login`, function (req, res) {
-    var title = 'login';
-    var fflash = req.flash();
-    var feedback = '';
-    if (fflash.error) {
-        feedback = fflash.error[0];
-    }
-    var description = `
-            <h1 style = "color:red">${feedback}</h1>
-            <form action = "/login_process" method = "post">
-                <input type="text" placeholder="id" name ="id">
-                <input type="password" placeholder="password" name="pwd">
-                <input type="submit">
-            </form>
-        `;
-    var printHTML = template.html(title, req.list, description, "", '');
-    res.send(printHTML);
-});
 //에러처리
 app.use(function (req, res, next) {
     res.status(404).send('Sorry cant find that!');
