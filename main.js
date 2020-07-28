@@ -24,6 +24,10 @@ app.use(flash());
 require('./lib/passport.js')(app);
 //페이지 라우터
 const pageRouter = require('./router/page');
+//프로세스 라우터
+const processRouter = require('./router/process');
+//폼 라우터
+const formRouter = require('./router/form');
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
@@ -41,6 +45,9 @@ app.get('/', function (req, res) {
 });
 
 app.use('/page', pageRouter);
+app.use('/process', processRouter);
+app.use('/form', formRouter);
+
 
 //에러처리
 app.use(function (req, res, next) {
