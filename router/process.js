@@ -10,9 +10,14 @@ router.post(`/create`, function (req, res) {
     var post = req.body;
     var title = post.title;
     var description = post.description;
-    fs.writeFile(`data/${title}`, description, 'utf8', function (err) {
-        res.redirect(`/page/${title}`);
-    });
+    var id = shortid.generate();
+    db.get('page').push({
+        id: id,
+        title: title,
+        description: description,
+        user_id: req.user.id
+    }).write();
+    res.redirect(`/page/${id}`);
 });
 //수정 작업
 router.post(`/update`, function (req, res) {
@@ -47,15 +52,12 @@ router.post(`/register`, function (req, res) {
     var pwd2 = post.pwd2;
     var nickname = post.nickname;
 
-    for (var i = 0; i < db.getState().users.length; i++) {
-        if (db.getState().users[i].email === email) {
-            req.flash('error', '이미 있는 이메일주소');
-            res.redirect('/page/register');
-        }
-    }
-    if (pwd != pwd2) {
+    if (db.get('users').find({ email: email }).value()) {
+        req.flash('error', '이미 있는 이메일 주소');
+        res.redirect('/form/register');
+    } else if (pwd != pwd2) {
         req.flash('error', 'Password must same');
-        res.redirect('/page/register');
+        res.redirect('/form/register');
     } else {
         var user = {
             id: shortid.generate(),

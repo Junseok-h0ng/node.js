@@ -7,6 +7,8 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const flash = require('connect-flash');
+const db = require('./lib/db');
+
 var app = express();
 
 app.use(cookieParser());
@@ -31,10 +33,9 @@ const formRouter = require('./router/form');
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
-    fs.readdir(`./data`, function (err, filelist) {
-        req.list = template.list(filelist);
-        next();
-    });
+    var filelist = db.get('page').value();
+    req.list = template.list(filelist);
+    next();
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
@@ -47,7 +48,6 @@ app.get('/', function (req, res) {
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);
-
 
 //에러처리
 app.use(function (req, res, next) {
