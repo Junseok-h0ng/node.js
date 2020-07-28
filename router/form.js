@@ -3,27 +3,26 @@ var router = express.Router();
 const fs = require('fs');
 const template = require('../lib/template.js');
 const auth = require('../lib/auth.js');
-
+const db = require('../lib/db');
 //수정 폼
 router.get(`/update/:pageID`, function (req, res) {
-    if (auth.authIsOwner(req)) {
-        var title = req.params.pageID;
-        fs.readFile(`data/${title}`, 'utf8', function (err, data) {
-            var description = `
+    var page = db.get('page').find({ id: req.params.pageID }).value();
+    if (page.user_id != req.user.id) {
+        req.flash('error', 'Not yours');
+        return res.redirect('/');
+    }
+    var title = page.title;
+    var data = page.description;
+    var description = `
             <form action="/process/update" method="POST">
-                <input type="hidden" name="id"value="${title}">
+                <input type="hidden" name="id"value="${page.id}">
                 <input type="text" placeholder="title" name="title" value="${title}">
                 <textarea id="editor" name="description">${data}</textarea>
                 <input type="submit">
             </form>
             <input type="button" value="back" onclick="window.history.back()"></input>`;
-            var printHTML = template.create(title, description);
-            res.send(printHTML);
-        });
-    } else {
-        req.flash('error', 'need login');
-        res.redirect(`/form/login`);
-    }
+    var printHTML = template.create(title, description);
+    res.send(printHTML);
 });
 //생성 폼
 router.get(`/create`, function (req, res) {

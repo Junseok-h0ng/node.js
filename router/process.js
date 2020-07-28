@@ -25,11 +25,11 @@ router.post(`/update`, function (req, res) {
     var id = post.id;
     var title = post.title;
     var description = post.description;
-    fs.rename(`data/${id}`, `data/${title}`, function () {
-        fs.writeFile(`data/${title}`, description, 'utf8', function () {
-            res.redirect(`/page/${title}`);
-        });
-    });
+    var page = db.get('page').find({ id: id }).value();
+    db.get('page').find({ id: id }).assign({
+        title: title, description: description
+    }).write();
+    res.redirect(`/page/${page.id}`);
 });
 //삭제 작업
 router.post(`/delete`, function (req, res) {

@@ -16,7 +16,7 @@ router.get(`/:pageID`, function (req, res, next) {
         `<p>by ${user.nickname}</p>
         <ul>
             <li><a href="/form/create">create</a></li>
-            <li><a href="/form/update/${title}">update</a></li>
+            <li><a href="/form/update/${page.id}">update</a></li>
             <form action ="/process/delete" method="post">
                 <input type="hidden" name="id" value="${title}">
                 <input type="submit" value="delete">
