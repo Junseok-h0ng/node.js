@@ -18,7 +18,7 @@ router.get(`/:pageID`, function (req, res, next) {
             <li><a href="/form/create">create</a></li>
             <li><a href="/form/update/${page.id}">update</a></li>
             <form action ="/process/delete" method="post">
-                <input type="hidden" name="id" value="${title}">
+                <input type="hidden" name="id" value="${page.id}">
                 <input type="submit" value="delete">
             </form>
         </ul>`;
