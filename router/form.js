@@ -83,7 +83,10 @@ router.get(`/login`, function (req, res) {
                     <input type="submit" value="login">
                 </form>
             `;
-    var printHTML = template.html(title, req.list, description, "", `<a href="/form/register">Register</a>`);
+    var printHTML = template.html(title, req.list, description, "", `
+    <a href="/form/register">Register</a> |
+    <a href="/auth/google">with Google</a> |
+    <a href="/auth/naver">with Naver</a>`);
     res.send(printHTML);
 });
 

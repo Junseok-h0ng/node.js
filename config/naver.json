@@ -1,0 +1,13 @@
+{
+    "web": {
+        "client_id": "E4HJ4K1A0QKpOcNAMJGF",
+        "project_id": "",
+        "auth_uri": "",
+        "token_uri": "",
+        "auth_provider_x509_cert_url": "",
+        "client_secret": "gPAdMBylyG",
+        "redirect_uris": [
+            "http://localhost:8000/auth/naver/callback"
+        ]
+    }
+}

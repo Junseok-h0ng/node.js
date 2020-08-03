@@ -1,6 +1,5 @@
 const express = require('express');
 var router = express.Router();
-const fs = require('fs');
 const template = require('../lib/template.js');
 const auth = require('../lib/auth.js');
 const db = require('../lib/db.js');

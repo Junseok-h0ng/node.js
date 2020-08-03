@@ -1,4 +1,3 @@
-const fs = require('fs');
 const template = require('./lib/template.js');
 const auth = require('./lib/auth.js');
 const express = require('express');
