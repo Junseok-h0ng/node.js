@@ -16,19 +16,19 @@ connection.connect();
 router.get(`/:pageID`, function (req, res, next) {
     connection.query(`SELECT * FROM topic WHERE id=${req.params.pageID}`, function (err2, topic) {
         if (err2) throw err2;
-
         var title = topic[0].title;
         var description = topic[0].description;
         var control =
             `
         <ul>
             <li><a href="/form/create">create</a></li>
-            <li><a href="/form/update/${req.params.id}">update</a></li>
+            <li><a href="/form/update/${req.params.pageID}">update</a></li>
             <form action ="/process/delete" method="post">
-                <input type="hidden" name="id" value="${req.params.id}">
+                <input type="hidden" name="id" value="${req.params.pageID}">
                 <input type="submit" value="delete">
             </form>
         </ul>`;
+
         var printHTML = template.html(title, req.list, description, control, auth.loginStatus(req));
         res.send(printHTML);
     });

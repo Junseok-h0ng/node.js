@@ -4,51 +4,67 @@ const bcrypt = require('bcrypt');
 const auth = require('../lib/auth.js');
 const db = require('../lib/db.js');
 const shortid = require('shortid');
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'nodejs',
+    password: '111111',
+    database: 'test'
+});
 
 //생성 작업
 router.post(`/create`, function (req, res) {
     var post = req.body;
     var title = post.title;
     var description = post.description;
-    var id = shortid.generate();
-    db.get('page').push({
-        id: id,
-        title: title,
-        description: description,
-        user_id: req.user.id
-    }).write();
-    res.redirect(`/page/${id}`);
+    // var id = shortid.generate();
+    connection.query(`INSERT INTO topic(title,description,created,author_id) VALUES(?,?,NOW(),?)`,
+        [title, description, 1],
+        function (err, result) {
+            if (err) throw err;
+            res.redirect(`/page/${result.insertId}`);
+        })
+    // db.get('page').push({
+    //     id: id,
+    //     title: title,
+    //     description: description,
+    //     user_id: req.user.id
+    // }).write();
+
 });
 //수정 작업
 router.post(`/update`, function (req, res) {
     var post = req.body;
-    var id = post.id;
-    var title = post.title;
-    var description = post.description;
-    var page = db.get('page').find({ id: id }).value();
-    db.get('page').find({ id: id }).assign({
-        title: title, description: description
-    }).write();
-    res.redirect(`/page/${page.id}`);
+    console.log(post);
+    // var id = post.id;
+    // var title = post.title;
+    // var description = post.description;
+    // var page = db.get('page').find({ id: id }).value();
+    // db.get('page').find({ id: id }).assign({
+    //     title: title, description: description
+    // }).write();
+
+    connection.query('UPDATE topic SET title=?,description=?,author_id=1 WHERE id=?', [post.title, post.description, post.id],
+        function (err, result) {
+            res.redirect(`/page/${post.id}`);
+        })
 });
 //삭제 작업
 router.post(`/delete`, function (req, res) {
     //로그인 여부 확인
-    if (!auth.authIsOwner(req)) {
-        res.redirect('/');
-        return false;
-    }
+    // if (!auth.authIsOwner(req)) {
+    //     res.redirect('/');
+    //     return false;
+    // }
     var post = req.body;
     var id = post.id;
-    var page = db.get('page').find({ id: id }).value();
+    console.log(id);
+    connection.query('DELETE FROM topic WHERE id = ?', [id], function (err, result) {
+        res.redirect('/');
+    })
+    // var page = db.get('page').find({ id: id }).value();
     //페이지 주인 과 접속한 유저 일치 확인 
-    if (page.user_id != req.user.id) {
-        // req.flash('error','Not yours');
-        res.redirect('/');
-    } else {
-        db.get('page').remove({ id: id }).write();
-        res.redirect('/');
-    }
+
 });
 //회원가입 작업
 router.post(`/register`, function (req, res) {

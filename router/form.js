@@ -3,30 +3,40 @@ var router = express.Router();
 const template = require('../lib/template.js');
 const auth = require('../lib/auth.js');
 const db = require('../lib/db');
+const mysql = require('mysql');
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'nodejs',
+    password: '111111',
+    database: 'test'
+});
 //수정 폼
 router.get(`/update/:pageID`, function (req, res) {
-    var page = db.get('page').find({ id: req.params.pageID }).value();
+    // var page = db.get('page').find({ id: req.params.pageID }).value();
     if (!auth.authIsOwner(req)) {
         req.flash('error', 'need Login');
         res.redirect('/form/login');
     }
-    if (page.user_id != req.user.id) {
-        // req.flash('error', 'Not yours');
-        return res.redirect('/');
-    }
+    // if (page.user_id != req.user.id) {
+    //     // req.flash('error', 'Not yours');
+    //     return res.redirect('/');
+    // }
 
-    var title = page.title;
-    var data = page.description;
-    var description = `
-            <form action="/process/update" method="POST">
-                <input type="hidden" name="id"value="${page.id}">
-                <input type="text" placeholder="title" name="title" value="${title}">
-                <textarea id="editor" name="description">${data}</textarea>
-                <input type="submit">
-            </form>
-            <input type="button" value="back" onclick="window.history.back()"></input>`;
-    var printHTML = template.create(title, description);
-    res.send(printHTML);
+    connection.query(`SELECT * FROM topic WHERE id = ${req.params.pageID}`, function (err, topic) {
+
+        var description = `
+        <form action="/process/update" method="POST">
+            <input type="hidden" name="id"value="${topic[0].id}">
+            <input type="text" placeholder="title" name="title" value="${topic[0].title}">
+            <textarea id="editor" name="description">${topic[0].description}</textarea>
+            <input type="submit">
+        </form>
+        <input type="button" value="back" onclick="window.history.back()"></input>`;
+
+        var printHTML = template.create(topic[0].title, description);
+        res.send(printHTML);
+    })
+
 });
 //생성 폼
 router.get(`/create`, function (req, res) {

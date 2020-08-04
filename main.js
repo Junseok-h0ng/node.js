@@ -45,7 +45,6 @@ app.get('*', function (req, res, next) {
     // req.list = template.list(filelist);
     // next();
     var topics = db.topics;
-    console.log(topics);
     req.list = template.list(topics);
     next();
 });
