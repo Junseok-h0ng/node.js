@@ -5,12 +5,15 @@ var connection = mysql.createConnection({
     password: '111111',
     database: 'test'
 });
-
 connection.connect();
-
-connection.query('SELECT * FROM topic ', function (error, results, fields) {
+connection.query('SELECT * FROM topic ', function (error, topics, fields) {
     if (error) throw error;
-    console.log(results);
+    exports.topics = topics;
 });
+
+connection.query(`SELECT * FROM topic WHERE id = 3`, function (err, page) {
+    if (err) throw err;
+});
+
 
 connection.end();
