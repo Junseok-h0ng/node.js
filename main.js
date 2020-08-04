@@ -5,6 +5,15 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
+const mysql = require('mysql');
+var connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'nodejs',
+    password: '111111',
+    database: 'test'
+});
+connection.connect();
+
 const flash = require('connect-flash');
 const db = require('./lib/db');
 
@@ -42,8 +51,8 @@ app.get('/', function (req, res) {
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
     var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
-});
 
+});
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);
