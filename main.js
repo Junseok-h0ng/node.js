@@ -44,14 +44,20 @@ app.get('*', function (req, res, next) {
     // var filelist = db.get('page').value();
     // req.list = template.list(filelist);
     // next();
-    var topics = db.topics;
-    req.list = template.list(topics);
-    next();
+    connection.query('SELECT * FROM topic ', function (error, topics, fields) {
+        if (error) throw error;
+        req.list = template.list(topics);
+        next();
+    });
+    // var topics = db.topics;
+    // req.list = template.list(topics);
+    // next();
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
+    console.log(req.user);
     var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
 });

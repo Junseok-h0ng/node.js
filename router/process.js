@@ -11,19 +11,19 @@ const connection = mysql.createConnection({
     password: '111111',
     database: 'test'
 });
-
-//생성 작업
+connection.connect();
+// 생성 작업
 router.post(`/create`, function (req, res) {
     var post = req.body;
-    var title = post.title;
-    var description = post.description;
     // var id = shortid.generate();
     connection.query(`INSERT INTO topic(title,description,created,author_id) VALUES(?,?,NOW(),?)`,
-        [title, description, 1],
+        [post.title, post.description, req.user.id],
         function (err, result) {
             if (err) throw err;
+
             res.redirect(`/page/${result.insertId}`);
-        })
+        });
+
     // db.get('page').push({
     //     id: id,
     //     title: title,
@@ -35,7 +35,6 @@ router.post(`/create`, function (req, res) {
 //수정 작업
 router.post(`/update`, function (req, res) {
     var post = req.body;
-    console.log(post);
     // var id = post.id;
     // var title = post.title;
     // var description = post.description;
@@ -44,7 +43,7 @@ router.post(`/update`, function (req, res) {
     //     title: title, description: description
     // }).write();
 
-    connection.query('UPDATE topic SET title=?,description=?,author_id=1 WHERE id=?', [post.title, post.description, post.id],
+    connection.query('UPDATE topic SET title=?,description=?,author_id=? WHERE id=?', [post.title, post.description, post.author, post.id],
         function (err, result) {
             res.redirect(`/page/${post.id}`);
         })

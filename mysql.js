@@ -14,6 +14,9 @@ connection.query('SELECT * FROM topic ', function (error, topics, fields) {
 connection.query(`SELECT * FROM topic WHERE id = 3`, function (err, page) {
     if (err) throw err;
 });
+connection.query('SELECT * FROM author', function (err, authors) {
+
+});
 
 
 connection.end();
