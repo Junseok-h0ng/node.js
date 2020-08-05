@@ -17,24 +17,32 @@ router.get(`/update/:pageID`, function (req, res) {
         req.flash('error', 'need Login');
         res.redirect('/form/login');
     }
+    connection.query('SELECT * FROM topic WHERE id = ?', [req.params.pageID], function (err, topic) {
+        console.log(topic[0].author_id, req.user.id);
+        if (topic[0].author_id == req.user.id) {
+            connection.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id WHERE topic.id=${req.params.pageID}`, function (err, topic) {
+                connection.query('SELECT * FROM author', function (err2, authors) {
+                    var description = `
+                    <form action="/process/update" method="POST">
+                        <input type="hidden" name="id"value="${req.params.pageID}">
+                        <input type="text" placeholder="title" name="title" value="${topic[0].title}">
+                        <textarea id="editor" name="description">${topic[0].description}</textarea>
+                        <input type="submit">
+                    </form>
+                    <input type="button" value="back" onclick="window.history.back()"></input>`;
+                    var printHTML = template.create(topic[0].title, description);
+                    res.send(printHTML);
+                });
+            });
+        } else {
+            res.redirect('/');
+        }
+    });
     // if (page.user_id != req.user.id) {
     //     // req.flash('error', 'Not yours');
     //     return res.redirect('/');
     // }
-    connection.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id WHERE topic.id=${req.params.pageID}`, function (err, topic) {
-        connection.query('SELECT * FROM author', function (err2, authors) {
-            var description = `
-            <form action="/process/update" method="POST">
-                <input type="hidden" name="id"value="${req.params.pageID}">
-                <input type="text" placeholder="title" name="title" value="${topic[0].title}">
-                <textarea id="editor" name="description">${topic[0].description}</textarea>
-                <input type="submit">
-            </form>
-            <input type="button" value="back" onclick="window.history.back()"></input>`;
-            var printHTML = template.create(topic[0].title, description);
-            res.send(printHTML);
-        });
-    })
+
 
 });
 //생성 폼

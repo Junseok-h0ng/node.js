@@ -5,6 +5,7 @@ const auth = require('../lib/auth.js');
 const db = require('../lib/db.js');
 const shortid = require('shortid');
 const mysql = require('mysql');
+const { connect } = require('http2');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'nodejs',
@@ -43,7 +44,7 @@ router.post(`/update`, function (req, res) {
     //     title: title, description: description
     // }).write();
 
-    connection.query('UPDATE topic SET title=?,description=?,author_id=? WHERE id=?', [post.title, post.description, post.author, post.id],
+    connection.query('UPDATE topic SET title=?,description=?,author_id=? WHERE id=?', [post.title, post.description, req.user.id, post.id],
         function (err, result) {
             res.redirect(`/page/${post.id}`);
         })
@@ -57,10 +58,16 @@ router.post(`/delete`, function (req, res) {
     // }
     var post = req.body;
     var id = post.id;
-    console.log(id);
-    connection.query('DELETE FROM topic WHERE id = ?', [id], function (err, result) {
-        res.redirect('/');
-    })
+    connection.query('SELECT * FROM topic WHERE id = ?', [id], function (err, topic) {
+        if (topic[0].author_id == req.user.id) {
+            connection.query('DELETE FROM topic WHERE id = ?', [id], function (err, result) {
+                res.redirect('/');
+            })
+        } else {
+            res.redirect('/');
+        }
+    });
+
     // var page = db.get('page').find({ id: id }).value();
     //페이지 주인 과 접속한 유저 일치 확인 
 
