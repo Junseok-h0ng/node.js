@@ -14,16 +14,14 @@ var connection = mysql.createConnection({
 connection.connect();
 
 router.get(`/:pageID`, function (req, res, next) {
-    connection.query(`SELECT * FROM topic LEFT JOIN user ON topic.user_id = user.id WHERE topic.id=?`, [req.params.pageID], function (err2, topic) {
-        console.log(topic[0]);
+    connection.query(`SELECT * FROM topic LEFT JOIN users ON topic.user_id = users.id WHERE topic.id=?`, [req.params.pageID], function (err2, topic) {
         if (err2) throw err2;
         var title = topic[0].title;
         var description = topic[0].description;
-        console.log(topic);
         var control =
             `
         <ul>
-            <p>by ${topic[0].nickname}</p>
+            <p>by ${topic[0].displayname}</p>
             <p>${topic[0].created}</p>
             <li><a href="/form/create">create</a></li>
             <li><a href="/form/update/${req.params.pageID}">update</a></li>

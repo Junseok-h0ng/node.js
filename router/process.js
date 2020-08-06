@@ -46,7 +46,7 @@ router.post(`/update`, function (req, res) {
 });
 //삭제 작업
 router.post(`/delete`, function (req, res) {
-    //로그인 여부 확인
+    // 로그인 여부 확인
     // if (!auth.authIsOwner(req)) {
     //     res.redirect('/');
     //     return false;
@@ -54,7 +54,7 @@ router.post(`/delete`, function (req, res) {
     var post = req.body;
     var id = post.id;
     connection.query('SELECT * FROM topic WHERE id = ?', [id], function (err, topic) {
-        if (topic[0].author == req.user.id) {
+        if (topic[0].user_id == req.user.id) {
             connection.query('DELETE FROM topic WHERE id = ?', [id], function (err, result) {
                 res.redirect('/');
             })
@@ -73,9 +73,8 @@ router.post(`/register`, function (req, res) {
     var email = post.email;
     var pwd = post.pwd;
     var pwd2 = post.pwd2;
-    var nickname = post.nickname;
-    console.log(post.email);
-    connection.query('SELECT * FROM user WHERE email=?', [email], function (err, user) {
+    var displayname = post.displayname;
+    connection.query('SELECT * FROM users WHERE email=?', [email], function (err, user) {
         if (user[0]) {
             req.flash('error', '이미 있는 이메일 주소 입니다.');
             res.redirect('/form/register');
@@ -88,10 +87,14 @@ router.post(`/register`, function (req, res) {
                     id: shortid.generate(),
                     email: email,
                     pwd: hash,
-                    nickname: nickname
+                    displayname: displayname
                 }
-                connection.query('INSERT INTO user(id,email,pwd,nickname) VALUES (?,?,?,?)', [user.id, user.email, user.pwd, user.nickname],
-                    function (err, result) { res.redirect('/'); })
+                connection.query('INSERT INTO users(id,email,Identi,displayname) VALUES (?,?,?,?)', [user.id, user.email, user.pwd, user.displayname],
+                    function (err, result) {
+                        req.login(user, function (err) {
+                            res.redirect('/');
+                        });
+                    });
             })
         }
 

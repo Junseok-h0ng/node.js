@@ -19,7 +19,7 @@ router.get(`/update/:pageID`, function (req, res) {
     }
     connection.query('SELECT * FROM topic WHERE id = ?', [req.params.pageID], function (err, topic) {
         if (topic[0].user_id == req.user.id) {
-            connection.query('SELECT * FROM topic LEFT JOIN user ON topic.user_id = user.nickname WHERE topic.id=?', [req.params.pageID], function (err, topic) {
+            connection.query('SELECT * FROM topic LEFT JOIN users ON topic.user_id = users.displayname WHERE topic.id=?', [req.params.pageID], function (err, topic) {
                 var description = `
                     <form action="/process/update" method="POST">
                         <input type="hidden" name="id"value="${req.params.pageID}">
@@ -69,7 +69,7 @@ router.get(`/register`, function (req, res) {
     var description = `
                 <h1 style = "color:red">${feedback}</h1>
                 <form action = "/process/register" method = "post">
-                   <p><input type="text" placeholder="nickname" name="nickname"></p>
+                   <p><input type="text" placeholder="displayname" name="displayname"></p>
                    <p><input type="text" placeholder="email" name ="email"></p>
                    <p><input type="password" placeholder="password" name="pwd"></p>
                    <p><input type="password" placeholder="password" name="pwd2"></p>
