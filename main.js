@@ -57,7 +57,6 @@ app.get('*', function (req, res, next) {
 app.get('/', function (req, res) {
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
-    console.log(req.user);
     var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
 });
