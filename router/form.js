@@ -48,18 +48,16 @@ router.get(`/update/:pageID`, function (req, res) {
 //생성 폼
 router.get(`/create`, function (req, res) {
     if (auth.authIsOwner(req)) {
-        connection.query('SELECT * FROM author', function (err2, authors) {
-            var title = "createPage";
-            var description = `
+        var title = "createPage";
+        var description = `
         <form action="/process/create" method="POST">
             <input type="text" placeholder="title" name="title">
             <textarea id="editor" name="description"></textarea>
             <input type="submit">
         </form>
         <input type="button" value="back" onclick="window.history.back()"></input>`;
-            var printHTML = template.create(title, description);
-            res.send(printHTML);
-        });
+        var printHTML = template.create(title, description);
+        res.send(printHTML);
     } else {
         req.flash('error', 'need login');
         res.redirect(`/form/login`);

@@ -1,11 +1,8 @@
 const express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
-const auth = require('../lib/auth.js');
-const db = require('../lib/db.js');
 const shortid = require('shortid');
 const mysql = require('mysql');
-const { connect } = require('http2');
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'nodejs',
@@ -16,13 +13,12 @@ connection.connect();
 // 생성 작업
 router.post(`/create`, function (req, res) {
     var post = req.body;
-    // var id = shortid.generate();
-    connection.query(`INSERT INTO topic(title,description,created,author_id) VALUES(?,?,NOW(),?)`,
-        [post.title, post.description, req.user.id],
+    var id = shortid.generate();
+    connection.query(`INSERT INTO topic(id,title,description,created,user_id) VALUES(?,?,?,NOW(),?)`,
+        [id, post.title, post.description, req.user.id],
         function (err, result) {
             if (err) throw err;
-
-            res.redirect(`/page/${result.insertId}`);
+            res.redirect(`/page/${id}`);
         });
 
     // db.get('page').push({
@@ -59,7 +55,7 @@ router.post(`/delete`, function (req, res) {
     var post = req.body;
     var id = post.id;
     connection.query('SELECT * FROM topic WHERE id = ?', [id], function (err, topic) {
-        if (topic[0].author_id == req.user.id) {
+        if (topic[0].author == req.user.id) {
             connection.query('DELETE FROM topic WHERE id = ?', [id], function (err, result) {
                 res.redirect('/');
             })
@@ -79,27 +75,49 @@ router.post(`/register`, function (req, res) {
     var pwd = post.pwd;
     var pwd2 = post.pwd2;
     var nickname = post.nickname;
+    console.log(post.email);
+    connection.query('SELECT * FROM user WHERE email=?', [email], function (err, user) {
+        if (user[0]) {
+            req.flash('error', '이미 있는 이메일 주소 입니다.');
+            res.redirect('/form/register');
+        } else if (pwd != pwd2) {
+            req.flash('error', '서로 다른 비밀번호 입니다.');
+            res.redirect('/form/register');
+        } else {
+            bcrypt.hash(pwd, 10, function (err, hash) {
+                var user = {
+                    id: shortid.generate(),
+                    email: email,
+                    pwd: hash,
+                    nickname: nickname
+                }
+                connection.query('INSERT INTO user(id,email,pwd,nickname) VALUES (?,?,?,?)', [user.id, user.email, user.pwd, user.nickname],
+                    function (err, result) { res.redirect('/'); })
+            })
+        }
 
-    if (db.get('users').find({ email: email }).value()) {
-        req.flash('error', '이미 있는 이메일 주소');
-        res.redirect('/form/register');
-    } else if (pwd != pwd2) {
-        req.flash('error', 'Password must same');
-        res.redirect('/form/register');
-    } else {
-        bcrypt.hash(pwd, 10, function (err, hash) {
-            var user = {
-                id: shortid.generate(),
-                email: email,
-                pwd: hash,
-                nickname: nickname
-            }
-            db.get('users').push(user).write();
-            req.login(user, function (err) {
-                return res.redirect('/');
-            });
+    });
 
-        });
-    }
+    // if (db.get('users').find({ email: email }).value()) {
+    //     req.flash('error', '이미 있는 이메일 주소');
+    //     res.redirect('/form/register');
+    // } else if (pwd != pwd2) {
+    //     req.flash('error', 'Password must same');
+    //     res.redirect('/form/register');
+    // } else {
+    //     bcrypt.hash(pwd, 10, function (err, hash) {
+    //         var user = {
+    //             id: shortid.generate(),
+    //             email: email,
+    //             pwd: hash,
+    //             nickname: nickname
+    //         }
+    //         db.get('users').push(user).write();
+    //         req.login(user, function (err) {
+    //             return res.redirect('/');
+    //         });
+
+    //     });
+    // }
 });
 module.exports = router;
