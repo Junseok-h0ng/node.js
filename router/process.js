@@ -20,7 +20,6 @@ router.post(`/create`, function (req, res) {
             if (err) throw err;
             res.redirect(`/page/${id}`);
         });
-
     // db.get('page').push({
     //     id: id,
     //     title: title,
@@ -40,7 +39,7 @@ router.post(`/update`, function (req, res) {
     //     title: title, description: description
     // }).write();
 
-    connection.query('UPDATE topic SET title=?,description=?,author_id=? WHERE id=?', [post.title, post.description, req.user.id, post.id],
+    connection.query('UPDATE topic SET title=?,description=? WHERE id=?', [post.title, post.description, post.id],
         function (err, result) {
             res.redirect(`/page/${post.id}`);
         })
