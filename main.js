@@ -5,19 +5,14 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const FileStore = require('session-file-store')(session);
-const mysql = require('mysql');
-var connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'nodejs',
-    password: '111111',
-    database: 'test'
-});
-connection.connect();
 
 const flash = require('connect-flash');
 const db = require('./lib/db');
 
 var app = express();
+
+
+const connection = require('./lib/mysql');
 
 app.use(cookieParser());
 app.use(express.static('public'));
@@ -41,9 +36,14 @@ const formRouter = require('./router/form');
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
-    var filelist = db.get('page').value();
-    req.list = template.list(filelist);
-    next();
+    // var filelist = db.get('page').value();
+
+    connection.query('SELECT * FROM topic', function (err, topic) {
+        req.list = template.list(topic);
+        next();
+    });
+
+
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
@@ -51,6 +51,7 @@ app.get('/', function (req, res) {
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
     var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
+
 
 });
 app.use('/page', pageRouter);
