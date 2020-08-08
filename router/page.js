@@ -7,7 +7,8 @@ const auth = require('../lib/auth.js');
 const db = require('../lib/mysql');
 
 router.get(`/:pageID`, function (req, res, next) {
-    db.page(req, function (err, topic) {
+    var pageID = req.params.pageID;
+    db.page(pageID, function (err, topic) {
         var title = topic[0].title;
         var description = topic[0].description;
         var control =

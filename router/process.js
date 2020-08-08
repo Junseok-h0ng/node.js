@@ -8,7 +8,6 @@ const db = require('../lib/mysql');
 //생성 작업
 router.post(`/create`, function (req, res) {
     var post = req.body;
-    // var id = shortid.generate();
     var info = {
         id: shortid.generate(),
         title: post.title,
@@ -17,29 +16,20 @@ router.post(`/create`, function (req, res) {
     }
     db.create(info);
     res.redirect(`/page/${info.id}`);
-    // connection.query('INSERT INTO topic(id,title,description,created,user_id) VALUES(?,?,?,NOW(),?)',
-    //     [id, post.title, post.description, req.user.id],
-    //     function (err, result) {
-    //         if (err) throw err;
-    //         res.redirect(`/page/${id}`);
-    //     })
-    // db.get('page').push({
-    //     id: id,
-    //     title: title,
-    //     description: description,
-    //     user_id: req.user.id
-    // }).write();
-    // res.redirect(`/page/${id}`);
 });
 //수정 작업
 router.post(`/update`, function (req, res) {
     var post = req.body;
-    var id = post.id;
-    var title = post.title;
-    var description = post.description;
-    connection.query('UPDATE topic SET title=?,description=?,created=NOW() WHERE id = ?', [title, description, id], function () {
-        res.redirect(`/page/${id}`)
-    })
+    var info = {
+        id: post.id,
+        title: post.title,
+        description: post.description
+    }
+    db.update(info);
+    res.redirect(`/page/${info.id}`);
+    // connection.query('UPDATE topic SET title=?,description=?,created=NOW() WHERE id = ?', [title, description, id], function () {
+    //     res.redirect(`/page/${id}`)
+    // })
     // var page = db.get('page').find({ id: id }).value();
     // db.get('page').find({ id: id }).assign({
     //     title: title, description: description
@@ -49,19 +39,23 @@ router.post(`/update`, function (req, res) {
 //삭제 작업
 router.post(`/delete`, function (req, res) {
     //로그인 여부 확인
-    if (!auth.authIsOwner(req)) {
-        res.redirect('/');
-        return false;
-    }
+    // if (!auth.authIsOwner(req)) {
+    //     res.redirect('/');
+    //     return false;
+    // }
     var post = req.body;
     var id = post.id;
-    connection.query('SELECT * FROM topic WHERE id=?', [id], function (err, topic) {
-        if (topic[0].user_id == req.user.id) {
-            connection.query('DELETE FROM topic WHERE id = ?', [id], function () {
-            });
-        };
+    db.page(id, function (err, topic) {
+        db.delete(topic[0].id);
         res.redirect('/');
     });
+    // connection.query('SELECT * FROM topic WHERE id=?', [id], function (err, topic) {
+    //     if (topic[0].user_id == req.user.id) {
+    //         connection.query('DELETE FROM topic WHERE id = ?', [id], function () {
+    //         });
+    //     };
+    //     res.redirect('/');
+    // });
 
 
     // var page = db.get('page').find({ id: id }).value();
