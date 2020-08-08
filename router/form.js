@@ -10,24 +10,25 @@ router.get(`/update/:pageID`, function (req, res) {
     //     req.flash('error', 'need Login');
     //     res.redirect('/form/login');
     // }
-    // if (page.user_id != req.user.id) {
-    //     // req.flash('error', 'Not yours');
-    //     return res.redirect('/');
-    // }
     connection.query('SELECT * FROM topic WHERE id = ?', [req.params.pageID], function (err, topic) {
-        var title = topic[0].title;
-        var data = topic[0].description;
-        var description = `
-                <form action="/process/update" method="POST">
-                    <input type="hidden" name="id"value="${topic[0].id}">
-                    <input type="text" placeholder="title" name="title" value="${title}">
-                    <textarea id="editor" name="description">${data}</textarea>
-                    <input type="submit">
-                </form>
-                <input type="button" value="back" onclick="window.history.back()"></input>`;
-        var printHTML = template.create(title, description);
-        res.send(printHTML);
-    })
+        if (topic[0].user_id == req.user.id) {
+            var title = topic[0].title;
+            var data = topic[0].description;
+            var description = `
+                    <form action="/process/update" method="POST">
+                        <input type="hidden" name="id"value="${topic[0].id}">
+                        <input type="text" placeholder="title" name="title" value="${title}">
+                        <textarea id="editor" name="description">${data}</textarea>
+                        <input type="submit">
+                    </form>
+                    <input type="button" value="back" onclick="window.history.back()"></input>`;
+            var printHTML = template.create(title, description);
+            res.send(printHTML);
+        } else {
+            // req.flash('error', 'Not yours');
+            return res.redirect('/');
+        }
+    });
 
 });
 //생성 폼

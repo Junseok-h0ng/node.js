@@ -2,20 +2,27 @@ const express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const auth = require('../lib/auth.js');
-const db = require('../lib/db.js');
 const shortid = require('shortid');
-const connection = require('../lib/mysql');
+const db = require('../lib/mysql');
 
 //생성 작업
 router.post(`/create`, function (req, res) {
     var post = req.body;
-    var id = shortid.generate();
-    connection.query('INSERT INTO topic(id,title,description,created,user_id) VALUES(?,?,?,NOW(),?)',
-        [id, post.title, post.description, req.user.id],
-        function (err, result) {
-            if (err) throw err;
-            res.redirect(`/page/${id}`);
-        })
+    // var id = shortid.generate();
+    var info = {
+        id: shortid.generate(),
+        title: post.title,
+        description: post.description,
+        user: 'id'
+    }
+    db.create(info);
+    res.redirect(`/page/${info.id}`);
+    // connection.query('INSERT INTO topic(id,title,description,created,user_id) VALUES(?,?,?,NOW(),?)',
+    //     [id, post.title, post.description, req.user.id],
+    //     function (err, result) {
+    //         if (err) throw err;
+    //         res.redirect(`/page/${id}`);
+    //     })
     // db.get('page').push({
     //     id: id,
     //     title: title,
@@ -30,7 +37,6 @@ router.post(`/update`, function (req, res) {
     var id = post.id;
     var title = post.title;
     var description = post.description;
-    console.log(id);
     connection.query('UPDATE topic SET title=?,description=?,created=NOW() WHERE id = ?', [title, description, id], function () {
         res.redirect(`/page/${id}`)
     })
@@ -43,15 +49,21 @@ router.post(`/update`, function (req, res) {
 //삭제 작업
 router.post(`/delete`, function (req, res) {
     //로그인 여부 확인
-    // if (!auth.authIsOwner(req)) {
-    //     res.redirect('/');
-    //     return false;
-    // }
+    if (!auth.authIsOwner(req)) {
+        res.redirect('/');
+        return false;
+    }
     var post = req.body;
     var id = post.id;
-    connection.query('DELETE FROM topic WHERE id = ?', [id], function () {
+    connection.query('SELECT * FROM topic WHERE id=?', [id], function (err, topic) {
+        if (topic[0].user_id == req.user.id) {
+            connection.query('DELETE FROM topic WHERE id = ?', [id], function () {
+            });
+        };
         res.redirect('/');
-    })
+    });
+
+
     // var page = db.get('page').find({ id: id }).value();
     // //페이지 주인 과 접속한 유저 일치 확인 
     // if (page.user_id != req.user.id) {

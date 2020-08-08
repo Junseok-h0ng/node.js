@@ -7,12 +7,10 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 
 const flash = require('connect-flash');
-const db = require('./lib/db');
-
 var app = express();
 
 
-const connection = require('./lib/mysql');
+const db = require('./lib/mysql');
 
 app.use(cookieParser());
 app.use(express.static('public'));
@@ -38,21 +36,22 @@ const formRouter = require('./router/form');
 app.get('*', function (req, res, next) {
     // var filelist = db.get('page').value();
 
-    connection.query('SELECT * FROM topic', function (err, topic) {
+    db.getList(function (topic) {
         req.list = template.list(topic);
         next();
     });
-
-
+    // connection.query('SELECT * FROM topic', function (err, topic) {
+    //     req.list = template.list(topic);
+    //     next();
+    // });
 });
+
 //메인인덱스 출력
 app.get('/', function (req, res) {
     var title = "indexPage";
     var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
     var printHTML = template.html(title, req.list, description, '', auth.loginStatus(req));
     res.send(printHTML);
-
-
 });
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
