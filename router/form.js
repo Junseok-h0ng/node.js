@@ -27,9 +27,6 @@ router.get(`/update/:pageID`, function (req, res) {
         var printHTML = template.create(title, description);
         res.send(printHTML);
     })
-
-
-
     // } else {
     //     // req.flash('error', 'Not yours');
     //     return res.redirect('/');

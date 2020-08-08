@@ -76,7 +76,7 @@ router.post(`/register`, function (req, res) {
     var pwd2 = post.pwd2;
     var nickname = post.nickname;
 
-    connection.query('SELECT * FROM users where email = ?', [email], function (err, user) {
+    db.user(email, function (err, user) {
         if (user[0]) {
             req.flash('error', '이미 있는 이메일 주소');
             res.redirect('/form/register');
@@ -91,36 +91,37 @@ router.post(`/register`, function (req, res) {
                     pwd: hash,
                     display: nickname
                 }
-                connection.query('INSERT INTO users(id,email,Identi,displayname) VALUES(?,?,?,?)',
-                    [user.id, user.email, user.pwd, user.display], function (err, result) {
-                        req.login(user, function () {
-                            res.redirect('/');
-                        });
-                    });
+                db.register(user);
+                req.login(user, function () {
+                    res.redirect('/');
+                })
             });
         }
-    })
+    });
 
-    // if (db.get('users').find({ email: email }).value()) {
-    //     req.flash('error', '이미 있는 이메일 주소');
-    //     res.redirect('/form/register');
-    // } else if (pwd != pwd2) {
-    //     req.flash('error', 'Password must same');
-    //     res.redirect('/form/register');
-    // } else {
-    //     bcrypt.hash(pwd, 10, function (err, hash) {
-    //         var user = {
-    //             id: shortid.generate(),
-    //             email: email,
-    //             pwd: hash,
-    //             nickname: nickname
-    //         }
-    //         db.get('users').push(user).write();
-    //         req.login(user, function (err) {
-    //             return res.redirect('/');
+    // connection.query('SELECT * FROM users where email = ?', [email], function (err, user) {
+    //     if (user[0]) {
+    //         req.flash('error', '이미 있는 이메일 주소');
+    //         res.redirect('/form/register');
+    //     } else if (pwd != pwd2) {
+    //         req.flash('error', '서로다른 패스워드 입력');
+    //         res.redirect('/form/register');
+    //     } else {
+    //         bcrypt.hash(pwd, 10, function (err, hash) {
+    //             var user = {
+    //                 id: shortid.generate(),
+    //                 email: email,
+    //                 pwd: hash,
+    //                 display: nickname
+    //             }
+    //             connection.query('INSERT INTO users(id,email,Identi,displayname) VALUES(?,?,?,?)',
+    //                 [user.id, user.email, user.pwd, user.display], function (err, result) {
+    //                     req.login(user, function () {
+    //                         res.redirect('/');
+    //                     });
+    //                 });
     //         });
-
-    //     });
-    // }
+    //     }
+    // })
 });
 module.exports = router;
