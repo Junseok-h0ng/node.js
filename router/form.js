@@ -5,51 +5,48 @@ const auth = require('../lib/auth.js');
 const db = require('../lib/mysql');
 //수정 폼
 router.get(`/update/:pageID`, function (req, res) {
-    // var page = db.get('page').find({ id: req.params.pageID }).value();
-    // if (!auth.authIsOwner(req)) {
-    //     req.flash('error', 'need Login');
-    //     res.redirect('/form/login');
-    // }
-    // connection.query('SELECT * FROM topic WHERE id = ?', [req.params.pageID], function (err, topic) {
-    // if (topic[0].user_id == req.user.id) {
-    var pageID = req.params.pageID;
-    db.page(pageID, function (err, topic) {
-        var title = topic[0].title;
-        var data = topic[0].description;
-        var description = `
-                <form action="/process/update" method="POST">
-                    <input type="hidden" name="id"value="${topic[0].id}">
-                    <input type="text" placeholder="title" name="title" value="${title}">
-                    <textarea id="editor" name="description">${data}</textarea>
-                    <input type="submit">
-                </form>
-                <input type="button" value="back" onclick="window.history.back()"></input>`;
-        var printHTML = template.create(title, description);
-        res.send(printHTML);
-    })
-    // } else {
-    //     // req.flash('error', 'Not yours');
-    //     return res.redirect('/');
-    // }
-
+    if (!auth.authIsOwner(req)) {
+        req.flash('error', 'need Login');
+        res.redirect('/form/login');
+    } else {
+        var pageID = req.params.pageID;
+        db.page(pageID, function (err, topic) {
+            if (topic[0].user_id == req.user.id) {
+                var title = topic[0].title;
+                var data = topic[0].description;
+                var description = `
+                        <form action="/process/update" method="POST">
+                            <input type="hidden" name="id"value="${pageID}">
+                            <input type="text" placeholder="title" name="title" value="${title}">
+                            <textarea id="editor" name="description">${data}</textarea>
+                            <input type="submit">
+                        </form>
+                        <input type="button" value="back" onclick="window.history.back()"></input>`;
+                var printHTML = template.create(title, description);
+                res.send(printHTML);
+            } else {
+                res.redirect('/');
+            }
+        });
+    }
 });
 //생성 폼
 router.get(`/create`, function (req, res) {
-    // if (auth.authIsOwner(req)) {
-    var title = "createPage";
-    var description = `
+    if (auth.authIsOwner(req)) {
+        var title = "createPage";
+        var description = `
         <form action="/process/create" method="POST">
             <input type="text" placeholder="title" name="title">
             <textarea id="editor" name="description"></textarea>
             <input type="submit">
         </form>
         <input type="button" value="back" onclick="window.history.back()"></input>`;
-    var printHTML = template.create(title, description);
-    res.send(printHTML);
-    // } else {
-    //     req.flash('error', 'need login');
-    //     res.redirect(`/form/login`);
-    // }
+        var printHTML = template.create(title, description);
+        res.send(printHTML);
+    } else {
+        req.flash('error', 'need login');
+        res.redirect(`/form/login`);
+    }
 });
 //회원가입 폼
 router.get(`/register`, function (req, res) {
