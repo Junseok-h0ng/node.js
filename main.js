@@ -9,7 +9,6 @@ const db = require('./lib/mysql');
 const flash = require('connect-flash');
 var app = express();
 
-
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
