@@ -20,7 +20,6 @@ router.post(`/create`, function (req, res) {
 //수정 작업
 router.post(`/update`, function (req, res) {
     var post = req.body;
-    console.log(post);
     var info = {
         id: post.id,
         title: post.title,
