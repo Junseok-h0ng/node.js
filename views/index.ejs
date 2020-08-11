@@ -2,14 +2,35 @@
 <html>
 
 <head>
-    <% include ../part/header %>
+    <%- include('part/header.ejs')  %>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/drop_menu.css' />
 </head>
 
 <body>
-    example ejs
-    <footer>
-        <% include ../part/footer %>
-    </footer>
+    <div id="container">
+        <nav id="primary_nav_wrap">
+            <ul>
+                <li class="current-menu-item"><a href="#">Home</a></li>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register" onclick="window.open(this.href, '_blank'
+                        , 'width=500px,height=700px,toolbars=no,scrollbars=no' ); return false;">Register</a></li>
+                <li><a href="#">Content</a>
+                    <ul>
+                        <% for(let i = 0; i < list.length; i++){ %>
+                        <li><a href="page/<%= list[i].id %>"><%= list[i].title%></a></li>
+                        <%   }%>
+                    </ul>
+                </li>
+                <li><a href="#">Menu 4</a></li>
+                <li><a href="#">Menu 5</a></li>
+                <li><a href="#">Menu 6</a></li>
+                <li><a href="#">Contact Us</a></li>
+            </ul>
+        </nav>
+    </div>
+
+
 </body>
 
 </html>

@@ -9,6 +9,10 @@ const db = require('./lib/mysql');
 const flash = require('connect-flash');
 var app = express();
 
+app.engine('html', require('ejs').renderFile);
+app.set('view engine', 'ejs');
+app.set('views', './views');
+
 app.use(cookieParser());
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,10 +42,21 @@ app.get('*', function (req, res, next) {
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
-    var title = "indexPage";
-    var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
-    var printHTML = template.html(title, req.list, description, false, auth.loginStatus(req));
-    res.send(printHTML);
+    // var title = "indexPage";
+    // var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
+    // var printHTML = template.html(title, req.list, description, false, auth.loginStatus(req));
+    // res.send(printHTML);
+    var data = {
+        title: 'IndexPage',
+        list: req.list
+    }
+    res.render('index', data);
+});
+app.get('/login', function (req, res) {
+    res.render('login');
+});
+app.get('/register', function (req, res) {
+    res.render('register');
 });
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
@@ -51,7 +66,7 @@ app.use('/form', formRouter);
 app.use(function (req, res, next) {
     res.status(404).send('Sorry cant find that!');
 });
-app.use(function (err, req, res, next) {
-    res.status(500).send("파일 없음");
-})
+// app.use(function (err, req, res, next) {
+//     res.status(500).send("파일 없음");
+// })
 app.listen(8000);
