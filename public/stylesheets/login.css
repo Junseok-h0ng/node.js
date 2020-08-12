@@ -121,7 +121,6 @@ input::-moz-focus-inner {
 }
 #submit {
   color: #707075;
-  margin-top: 40px;
   transition: color 300ms;
 }
 #submit:focus {
@@ -130,6 +129,6 @@ input::-moz-focus-inner {
 #submit:active {
   color: #d0d0d2;
 }
-form{
-  height:170px;
+.register{
+  margin-top:30px;
 }

@@ -13,9 +13,6 @@
             <ul>
                 <li class="current-menu-item"><a href="/">Home</a></li>
                 <%- login %>
-                <!-- <li><a href="/login">Login</a></li>
-                <li><a href="/register" onclick="window.open(this.href, '_blank'
-                        , 'width=500px,height=700px,toolbars=no,scrollbars=no' ); return false;">Register</a></li> -->
                 <li><a href="#">Content</a>
                     <%- list %>
                 </li>
@@ -30,13 +27,23 @@
 
             </div>
             <div id="content">
-                <img src="/img/hello.jpg" style="width:700px; display:block;">
+                <div class="description">
+                    <%- description %>
+                </div>
+                <div class="control">
+                    <p>by <%- displayname %></p>
+                    <ul>
+                        <li><a href="/form/create">create</a></li>
+                        <li><a href="/form/update/<%= pageID %>">update</a></li>
+                        <form action="/process/delete" method="post">
+                            <input type="hidden" name="id" value="<%= pageID %>">
+                            <input type="submit" value="delete">
+                        </form>
+                    </ul>
+                </div>
             </div>
         </div>
-
     </div>
-
-
 </body>
 
 </html>

@@ -32,7 +32,6 @@ const pageRouter = require('./router/page');
 const processRouter = require('./router/process');
 //폼 라우터
 const formRouter = require('./router/form');
-
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     db.getList(function (topic) {
@@ -42,30 +41,28 @@ app.get('*', function (req, res, next) {
 });
 //메인인덱스 출력
 app.get('/', function (req, res) {
-    // var title = "indexPage";
-    // var description = `<img src ="/img/hello.jpg" style="width:300px; display:block;">`
-    // var printHTML = template.html(title, req.list, description, false, auth.loginStatus(req));
-    // res.send(printHTML);
-    var data = {
+    res.render('index', {
         title: 'IndexPage',
-        list: req.list
-    }
-    res.render('index', data);
+        list: req.list,
+        login: auth.loginStatus(req)
+    });
 });
+
 app.get('/login', function (req, res) {
     res.render('login');
 });
+
 app.get('/register', function (req, res) {
     res.render('register');
 });
+
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);
-
 //에러처리
-app.use(function (req, res, next) {
-    res.status(404).send('Sorry cant find that!');
-});
+// app.use(function (req, res, next) {
+//     res.status(404).send('Sorry cant find that!');
+// });
 // app.use(function (err, req, res, next) {
 //     res.status(500).send("파일 없음");
 // })
