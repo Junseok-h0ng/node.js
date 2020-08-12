@@ -132,3 +132,13 @@ input::-moz-focus-inner {
 .register{
   margin-top:30px;
 }
+
+.google{
+ width: 190px;
+ height:45px;
+}
+.naver{
+  padding-left:3px;
+  width:185px;
+  height:40px;
+}

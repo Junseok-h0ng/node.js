@@ -18,8 +18,7 @@ router.get(`/update/:pageID`, function (req, res) {
                     pageID: pageID,
                     data: topic[0].description
                 }
-                var printHTML = template.create(info);
-                res.send(printHTML);
+                res.render('update', info);
             } else {
                 res.redirect('/');
             }

@@ -56,6 +56,10 @@ app.get('/register', function (req, res) {
     res.render('register');
 });
 
+app.get('/create', function (req, res) {
+    res.render('create');
+});
+
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);

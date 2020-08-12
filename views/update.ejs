@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.ckeditor.com/ckeditor5/21.0.0/classic/ckeditor.js"></script>
+</head>
+
+<body>
+    <form action="/process/update" method="POST">
+        <input type="hidden" name="id" value="<%- pageID %>">
+        <input type="text" placeholder="title" name="title" value="<%- title %>">
+        <textarea id="editor" name="description"><%- data%></textarea>
+        <input type="submit">
+    </form>
+    <input type="button" value="back" onclick="window.history.back()"></input>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+</body>
+
+</html>
