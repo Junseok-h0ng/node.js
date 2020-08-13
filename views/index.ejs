@@ -9,22 +9,7 @@
 
 <body>
     <div id="container">
-        <nav id="primary_nav_wrap">
-            <ul>
-                <li class="current-menu-item"><a href="/">Home</a></li>
-                <%- login %>
-                <!-- <li><a href="/login">Login</a></li>
-                <li><a href="/register" onclick="window.open(this.href, '_blank'
-                        , 'width=500px,height=700px,toolbars=no,scrollbars=no' ); return false;">Register</a></li> -->
-                <li><a href="#">Content</a>
-                    <%- list %>
-                </li>
-                <li><a href="#">Menu 4</a></li>
-                <li><a href="#">Menu 5</a></li>
-                <li><a href="#">Menu 6</a></li>
-                <li><a href="#">Contact Us</a></li>
-            </ul>
-        </nav>
+        <%- include('part/list.ejs') %>
         <div id="main">
             <div id="side">
 

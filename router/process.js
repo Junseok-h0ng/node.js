@@ -55,10 +55,10 @@ router.post(`/register`, function (req, res) {
     db.user(email, function (err, user) {
         if (user[0]) {
             req.flash('error', '이미 있는 이메일 주소');
-            res.redirect('/form/register');
+            res.redirect('/register');
         } else if (pwd != pwd2) {
             req.flash('error', '서로다른 패스워드 입력');
-            res.redirect('/form/register');
+            res.redirect('/register');
         } else {
             bcrypt.hash(pwd, 10, function (err, hash) {
                 var user = {

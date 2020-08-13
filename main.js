@@ -35,6 +35,7 @@ const formRouter = require('./router/form');
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     db.getList(function (topic) {
+        console.log(topic);
         req.list = template.list(topic);
         next();
     });
@@ -59,7 +60,21 @@ app.get('/register', function (req, res) {
 app.get('/create', function (req, res) {
     res.render('create');
 });
-
+app.get('/menu', function (req, res) {
+    db.getList(function (topic) {
+        res.render('menu', {
+            topic: topic,
+            list: req.list,
+            login: auth.loginStatus(req)
+        });
+    });
+});
+app.get('/boots', function (req, res) {
+    res.render('boots', {
+        list: req.list,
+        login: auth.loginStatus(req)
+    });
+})
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);

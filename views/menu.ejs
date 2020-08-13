@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -7,12 +7,12 @@
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.1.1">
-    <title><%- title %></title>
+    <title>Album example · Bootstrap</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.5/examples/album/">
 
     <!-- Bootstrap core CSS -->
-    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <link href="stylesheets/bootstrap.min.css" rel="stylesheet">
 
     <style>
         .bd-placeholder-img {
@@ -29,10 +29,6 @@
                 font-size: 3.5rem;
             }
         }
-
-        .album {
-            min-height: 1000px;
-        }
     </style>
     <!-- Custom styles for this template -->
     <link href="/stylesheets/menu.css" rel="stylesheet">
@@ -45,20 +41,16 @@
         <%- include ('part/list.ejs'); %>
         <section class="jumbotron text-center">
             <div class="container">
-                <h1><%- title %></h1>
+                <h1>Content</h1>
             </div>
         </section>
 
         <div class="album py-5 bg-light">
-            <button type="button" class="btn btn-sm btn-outline-secondary"
-                onclick="location.href='/create'">Create</button>
             <div class="container">
-                <%- description %>
+                <%- include ('part/content.ejs'); %>
+                <button type="button" class="btn btn-sm btn-outline-secondary"
+                    onclick="location.href='/create'">Create</a></button>
             </div>
-
-        </div>
-        <small class="text-muted">by <%- displayname %></small>
-        <small class="text-muted"><%- created %></small>
     </main>
 
     <footer class=" text-muted">
