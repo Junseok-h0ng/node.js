@@ -23,15 +23,15 @@ router.get(`/:pageID`, function (req, res, next) {
     });
 });
 router.get(`/:pageID/:subPageID`, function (req, res, next) {
-    var pageID = req.params.subPageID;
-    db.subpage(pageID, function (err, topic) {
-        res.render('page', {
+    var subpageID = req.params.subPageID;
+    var pageID = req.params.pageID;
+    db.subpage(subpageID, function (err, topic) {
+        res.render('subpage', {
             title: topic[0].title,
             description: topic[0].description,
             created: topic[0].created,
             displayname: '',
             pageID: pageID,
-            sublist: '',
             list: req.list,
             login: auth.loginStatus(req)
         });

@@ -58,11 +58,8 @@
 
         <div class="album py-5 bg-light row">
             <div class="col-md-">
-                <div class="row">
-                    <%- sublist %>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
-                    onclick="location.href='/create/<%- pageID %>'">Create</button>
+                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
+                    onclick="location.href='/page/<%= pageID %>'" value="back">
             </div>
             <div class="container col description">
                 <%- description %>

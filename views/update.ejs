@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="https://cdn.ckeditor.com/ckeditor5/21.0.0/classic/ckeditor.js"></script>
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -13,9 +14,9 @@
         <input type="hidden" name="id" value="<%- pageID %>">
         <input type="text" placeholder="title" name="title" value="<%- title %>">
         <textarea id="editor" name="description"><%- data%></textarea>
-        <input type="submit">
+        <input class="btn btn-sm btn-outline-secondary" type="submit">
     </form>
-    <input type="button" value="back" onclick="window.history.back()"></input>
+    <input class="btn btn-sm btn-outline-secondary" type="button" value="back" onclick="window.history.back()"></input>
     <script>
         ClassicEditor
             .create(document.querySelector('#editor'))

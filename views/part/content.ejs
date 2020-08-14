@@ -9,7 +9,7 @@
                     dy=".3em"><%= topic.title %></text>
             </svg>
             <div class="card-body">
-                <p class="card-text"><%- topic.description %></p>
+                <p class="card-text"><%- topic.description.slice(0,20) %></p>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                         <button type="button" class="btn btn-sm btn-outline-secondary"
@@ -23,4 +23,9 @@
         </div>
     </div>
     <%   }); %>
+    <script>
+        function slice_description(description) {
+            return description.slice(0, 10);
+        }
+    </script>
 </div>
