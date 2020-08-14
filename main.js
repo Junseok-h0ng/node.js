@@ -56,10 +56,6 @@ app.get('/login', function (req, res) {
 app.get('/register', function (req, res) {
     res.render('register');
 });
-
-app.get('/create', function (req, res) {
-    res.render('create');
-});
 app.get('/menu', function (req, res) {
     db.getList(function (topic) {
         res.render('menu', {
@@ -78,6 +74,7 @@ app.get('/boots', function (req, res) {
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);
+app.use('/create', require('./router/create'));
 //에러처리
 // app.use(function (req, res, next) {
 //     res.status(404).send('Sorry cant find that!');
