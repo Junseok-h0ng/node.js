@@ -34,9 +34,8 @@ const processRouter = require('./router/process');
 const formRouter = require('./router/form');
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
-    db.getList(function (topic) {
-        console.log(topic);
-        req.list = template.list(topic);
+    db.list(function (topic) {
+        req.list = template.list(topic, '');
         next();
     });
 });
@@ -57,11 +56,9 @@ app.get('/register', function (req, res) {
     res.render('register');
 });
 
-app.get('/create', function (req, res) {
-    res.render('create');
-});
+
 app.get('/menu', function (req, res) {
-    db.getList(function (topic) {
+    db.list(function (topic) {
         res.render('menu', {
             topic: topic,
             list: req.list,
@@ -78,6 +75,7 @@ app.get('/boots', function (req, res) {
 app.use('/page', pageRouter);
 app.use('/process', processRouter);
 app.use('/form', formRouter);
+app.use('/create', require('./router/create'));
 //에러처리
 // app.use(function (req, res, next) {
 //     res.status(404).send('Sorry cant find that!');

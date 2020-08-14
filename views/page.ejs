@@ -33,6 +33,10 @@
         .album {
             min-height: 1000px;
         }
+
+        ul {
+            list-style: none;
+        }
     </style>
     <!-- Custom styles for this template -->
     <link href="/stylesheets/menu.css" rel="stylesheet">
@@ -49,15 +53,21 @@
             </div>
         </section>
 
-        <div class="album py-5 bg-light">
-            <button type="button" class="btn btn-sm btn-outline-secondary"
-                onclick="location.href='/create'">Create</button>
-            <div class="container">
+        <div class="album py-5 bg-light row">
+            <div class="col">
+                <div class="row">
+                    <%- sublist %>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
+                    onclick="location.href='/create/<%- pageID %>'">Create</button>
+            </div>
+
+            <div class="container col">
                 <%- description %>
             </div>
 
         </div>
-        <small class="text-muted">by <%- displayname %></small>
+        <small class="text-muted"><%- displayname %></small>
         <small class="text-muted"><%- created %></small>
     </main>
 

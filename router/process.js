@@ -14,8 +14,20 @@ router.post(`/create`, function (req, res) {
         description: post.description,
         user: req.user.id
     }
-    db.create(info);
+    db.create(info, 'user_id', 'topic');
     res.redirect(`/page/${info.id}`);
+});
+router.post('/create/:pageID', function (req, res) {
+    var parent_id = req.params.pageID;
+    var post = req.body;
+    var info = {
+        id: shortid.generate(),
+        title: post.title,
+        description: post.description,
+        user: parent_id
+    }
+    db.create(info, 'parent_id', 'subtopic');
+    res.redirect(`/page/${parent_id}/${info.id}`);
 });
 //수정 작업
 router.post(`/update`, function (req, res) {
