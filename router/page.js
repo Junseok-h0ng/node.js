@@ -7,7 +7,6 @@ const template = require('../lib/template');
 router.get(`/:pageID`, function (req, res, next) {
     var pageID = req.params.pageID;
     db.page(pageID, function (err, topic) {
-        console.log(topic);
         db.sublist(pageID, function (err, sublist) {
             res.render('page', {
                 title: topic[0].title,

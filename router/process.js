@@ -17,6 +17,7 @@ router.post(`/create`, function (req, res) {
     db.create(info, 'user_id', 'topic');
     res.redirect(`/page/${info.id}`);
 });
+//하위 페이지 생성
 router.post('/create/:pageID', function (req, res) {
     var parent_id = req.params.pageID;
     var post = req.body;
@@ -40,6 +41,7 @@ router.post(`/update`, function (req, res) {
     db.update(info);
     res.redirect(`/page/${info.id}`);
 });
+//하위페이지 수정
 router.post(`/update/:parent`, function (req, res) {
     var post = req.body;
     var parent = req.params.parent;
@@ -52,20 +54,38 @@ router.post(`/update/:parent`, function (req, res) {
     res.redirect(`/page/${parent}/${info.id}`);
 })
 //삭제 작업
-router.post(`/delete`, function (req, res) {
+router.post(`/delete/:pageID`, function (req, res) {
     //로그인 여부 확인
     if (!auth.authIsOwner(req)) {
         req.flash('error', 'need Login');
-        res.redirect('/form/login');
+        res.redirect('/login');
     }
-    var post = req.body;
-    var id = post.id;
+    var id = req.params.pageID;
     db.page(id, function (err, topic) {
         if (topic[0].user_id === req.user.id) {
-            db.delete(id);
+            db.delete(id, 'topic');
+            db.delete_sub(id);
         }
-        res.redirect('/');
+        res.redirect('/menu');
     });
+});
+//삭제 작업
+router.post(`/delete/:pageID/:subpageID`, function (req, res) {
+    //로그인 여부 확인
+    if (!auth.authIsOwner(req)) {
+        req.flash('error', 'need Login');
+        res.redirect('/login');
+    }
+    var id = req.params.subpageID;
+    var pageID = req.params.pageID;
+    var user = req.user.id;
+    db.subpage(id, function (err, topic) {
+        console.log(topic);
+        if (topic[0].user_id === user) {
+            db.delete(id, 'subtopic');
+        }
+        res.redirect(`/page/${pageID}`);
+    })
 });
 //회원가입 작업
 router.post(`/register`, function (req, res) {

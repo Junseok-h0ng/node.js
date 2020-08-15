@@ -26,12 +26,7 @@ app.use(flash());
 
 //passport 실행
 require('./lib/passport.js')(app);
-//페이지 라우터
-const pageRouter = require('./router/page');
-//프로세스 라우터
-const processRouter = require('./router/process');
-//폼 라우터
-const formRouter = require('./router/form');
+
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
     db.list(function (topic) {
@@ -48,13 +43,8 @@ app.get('/', function (req, res) {
     });
 });
 
-app.get('/login', function (req, res) {
-    res.render('login');
-});
-
-app.get('/register', function (req, res) {
-    res.render('register');
-});
+app.get('/login', function (req, res) { res.render('login'); });
+app.get('/register', function (req, res) { res.render('register') });
 
 app.get('/menu', function (req, res) {
     db.list(function (topic) {
@@ -71,10 +61,12 @@ app.get('/boots', function (req, res) {
         login: auth.loginStatus(req)
     });
 })
-app.use('/page', pageRouter);
-app.use('/process', processRouter);
-app.use('/form', formRouter);
+app.use('/page', require('./router/page'));
+app.use('/process', require('./router/process'));
+app.use('/form', require('./router/form'));
 app.use('/create', require('./router/create'));
+
+
 //에러처리
 // app.use(function (req, res, next) {
 //     res.status(404).send('Sorry cant find that!');

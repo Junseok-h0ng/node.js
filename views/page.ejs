@@ -61,12 +61,16 @@
                 <div class="row">
                     <%- sublist %>
                 </div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
-                    onclick="location.href='/create/<%- pageID %>'">Create</button>
-                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
-                    onclick="location.href='/form/update/<%= pageID %>'" value="edit">
-                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
-                    onclick="location.href='/process/delete'" value="delete">
+                <form action="/process/delete/<%- pageID %>" method="POST">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
+                        onclick="location.href='/create/<%- pageID %>'">Create</button>
+                    <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
+                        onclick="location.href='/form/update/<%= pageID %>'" value="edit">
+                    <input type="submit" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
+                        value="delete">
+                </form>
+
+
             </div>
             <div class="container col description">
                 <%- description %>
