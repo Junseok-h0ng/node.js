@@ -18,7 +18,7 @@ router.get(`/update/:pageID`, function (req, res) {
                     parent: null,
                     data: topic[0].description
                 }
-                res.render('update', info);
+                res.render('./crud/update', info);
             } else {
                 var backURL = req.header('Referer') || '/';
                 res.redirect(backURL);
@@ -35,7 +35,7 @@ router.get(`/update/:pageID/:subpageID`, function (req, res) {
             parent: topic[0].parent_id,
             data: topic[0].description,
         }
-        res.render('update', info);
+        res.render('./crud/update', info);
     });
 
 });

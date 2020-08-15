@@ -43,12 +43,12 @@ app.get('/', function (req, res) {
     });
 });
 
-app.get('/login', function (req, res) { res.render('login'); });
-app.get('/register', function (req, res) { res.render('register') });
+app.get('/login', function (req, res) { res.render('./users/login'); });
+app.get('/register', function (req, res) { res.render('./users/register') });
 
 app.get('/menu', function (req, res) {
     db.list(function (topic) {
-        res.render('menu', {
+        res.render('./contents/menu', {
             topic: topic,
             list: req.list,
             login: auth.loginStatus(req)

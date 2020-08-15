@@ -5,7 +5,7 @@ var router = express.Router();
 
 router.get('/', function (req, res) {
     if (auth.authIsOwner(req)) {
-        res.render('create', { pageID: null });
+        res.render('./crud/create', { pageID: null });
     } else {
         res.redirect('/login');
     }
@@ -17,7 +17,7 @@ router.get('/:pageID', function (req, res) {
     } else {
         db.page(pageID, function (err, topic) {
             if (topic[0].user_id === req.user.id) {
-                res.render('create', { pageID: req.params.pageID });
+                res.render('./crud/create', { pageID: req.params.pageID });
             } else {
                 res.redirect(`/page/${pageID}`);
             };

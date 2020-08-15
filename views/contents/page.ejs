@@ -49,7 +49,7 @@
 <body>
 
     <main role="main">
-        <%- include ('part/list.ejs'); %>
+        <%- include ('../part/list.ejs'); %>
         <section class="jumbotron text-center">
             <div class="container">
                 <h1><%- title %></h1>
@@ -58,14 +58,19 @@
 
         <div class="album py-5 bg-light row">
             <div class="col-md-">
-                <form action="/process/delete/<%- pageID %>/<%- subpageID %>" method="POST">
-                    <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
-                        onclick="location.href='/page/<%= pageID %>'" value="back">
+                <div class="row">
+                    <%- sublist %>
+                </div>
+                <form action="/process/delete/<%- pageID %>" method="POST">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
+                        onclick="location.href='/create/<%- pageID %>'">Create</button>
                     <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
-                        onclick="location.href='/form/update/<%= pageID %>/<%= subpageID %>'" value="edit">
+                        onclick="location.href='/form/update/<%= pageID %>'" value="edit">
                     <input type="submit" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
                         value="delete">
                 </form>
+
+
             </div>
             <div class="container col description">
                 <%- description %>

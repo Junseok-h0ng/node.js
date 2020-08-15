@@ -8,7 +8,7 @@ router.get(`/:pageID`, function (req, res, next) {
     var pageID = req.params.pageID;
     db.page(pageID, function (err, topic) {
         db.sublist(pageID, function (err, sublist) {
-            res.render('page', {
+            res.render('./contents/page', {
                 title: topic[0].title,
                 description: topic[0].description,
                 displayname: "by " + topic[0].displayname,
@@ -26,7 +26,7 @@ router.get(`/:pageID/:subPageID`, function (req, res, next) {
     var subpageID = req.params.subPageID;
     var pageID = req.params.pageID;
     db.subpage(subpageID, function (err, topic) {
-        res.render('subpage', {
+        res.render('./contents/subpage', {
             title: topic[0].title,
             description: topic[0].description,
             created: topic[0].created,
