@@ -35,11 +35,22 @@ router.post(`/update`, function (req, res) {
     var info = {
         id: post.id,
         title: post.title,
-        description: post.description
+        description: post.description,
     }
     db.update(info);
     res.redirect(`/page/${info.id}`);
 });
+router.post(`/update/:parent`, function (req, res) {
+    var post = req.body;
+    var parent = req.params.parent;
+    var info = {
+        id: post.id,
+        title: post.title,
+        description: post.description,
+    }
+    db.subupdate(info);
+    res.redirect(`/page/${parent}/${info.id}`);
+})
 //삭제 작업
 router.post(`/delete`, function (req, res) {
     //로그인 여부 확인

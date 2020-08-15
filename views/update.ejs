@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <form action="/process/update" method="POST">
+    <form action="/process/update/<%=parent%>" method="POST">
         <input type="hidden" name="id" value="<%- pageID %>">
         <input type="text" placeholder="title" name="title" value="<%- title %>">
         <textarea id="editor" name="description"><%- data%></textarea>

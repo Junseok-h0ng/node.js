@@ -60,6 +60,10 @@
             <div class="col-md-">
                 <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
                     onclick="location.href='/page/<%= pageID %>'" value="back">
+                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
+                    onclick="location.href='/form/update/<%= pageID %>/<%= subpageID %>'" value="edit">
+                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
+                    onclick="location.href='/process/delete'" value="delete">
             </div>
             <div class="container col description">
                 <%- description %>

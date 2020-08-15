@@ -63,6 +63,10 @@
                 </div>
                 <button type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 20px;"
                     onclick="location.href='/create/<%- pageID %>'">Create</button>
+                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
+                    onclick="location.href='/form/update/<%= pageID %>'" value="edit">
+                <input type="button" class="btn btn-sm btn-outline-secondary" style="margin-left: 5px;"
+                    onclick="location.href='/process/delete'" value="delete">
             </div>
             <div class="container col description">
                 <%- description %>

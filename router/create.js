@@ -1,11 +1,28 @@
 const express = require('express');
+const db = require('../lib/mysql');
+const auth = require('../lib/auth');
 var router = express.Router();
 
 router.get('/', function (req, res) {
-    res.render('create', { pageID: null });
+    if (auth.authIsOwner(req)) {
+        res.render('create', { pageID: null });
+    } else {
+        res.redirect('/login');
+    }
 });
 router.get('/:pageID', function (req, res) {
-    res.render('create', { pageID: req.params.pageID });
+    var pageID = req.params.pageID;
+    if (!auth.authIsOwner(req)) {
+        res.redirect('/login');
+    } else {
+        db.page(pageID, function (err, topic) {
+            if (topic[0].user_id === req.user.id) {
+                res.render('create', { pageID: req.params.pageID });
+            } else {
+                res.redirect(`/page/${pageID}`);
+            };
+        });
+    }
 });
 
 module.exports = router;

@@ -3,12 +3,11 @@ var router = express.Router();
 const template = require('../lib/template.js');
 const auth = require('../lib/auth.js');
 const db = require('../lib/mysql');
-const data_template = require('../lib/data_template');
 //수정 폼
 router.get(`/update/:pageID`, function (req, res) {
     if (!auth.authIsOwner(req)) {
         req.flash('error', 'need Login');
-        res.redirect('/form/login');
+        res.redirect('/login');
     } else {
         var pageID = req.params.pageID;
         db.page(pageID, function (err, topic) {
@@ -16,14 +15,29 @@ router.get(`/update/:pageID`, function (req, res) {
                 var info = {
                     title: topic[0].title,
                     pageID: pageID,
+                    parent: null,
                     data: topic[0].description
                 }
                 res.render('update', info);
             } else {
-                res.redirect('/');
+                var backURL = req.header('Referer') || '/';
+                res.redirect(backURL);
             }
         });
     }
+});
+router.get(`/update/:pageID/:subpageID`, function (req, res) {
+    var subpageID = req.params.subpageID
+    db.subpage(subpageID, function (err, topic) {
+        var info = {
+            title: topic[0].title,
+            pageID: subpageID,
+            parent: topic[0].parent_id,
+            data: topic[0].description,
+        }
+        res.render('update', info);
+    });
+
 });
 //생성 폼
 router.get(`/create`, function (req, res) {
@@ -35,32 +49,8 @@ router.get(`/create`, function (req, res) {
         res.send(printHTML);
     } else {
         req.flash('error', 'need login');
-        res.redirect(`/form/login`);
+        res.redirect(`/login`);
     }
-});
-//회원가입 폼
-router.get(`/register`, function (req, res) {
-    var title = 'register';
-    var fflash = req.flash();
-    var feedback = '';
-    if (fflash.error) {
-        feedback = fflash.error[0];
-    }
-    var description = data_template.register(feedback)
-    var printHTML = template.html(title, req.list, description, "", `<a href="/form/login">login</a>`);
-    res.send(printHTML);
-});
-//로그인 폼
-router.get(`/login`, function (req, res) {
-    var title = 'login';
-    var fflash = req.flash();
-    var feedback = '';
-    if (fflash.error) {
-        feedback = fflash.error[0];
-    }
-    var description = data_template.login(feedback);
-    var printHTML = template.html(title, req.list, description, "", data_template.login_control());
-    res.send(printHTML);
 });
 
 module.exports = router;

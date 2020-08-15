@@ -56,7 +56,6 @@ app.get('/register', function (req, res) {
     res.render('register');
 });
 
-
 app.get('/menu', function (req, res) {
     db.list(function (topic) {
         res.render('menu', {
