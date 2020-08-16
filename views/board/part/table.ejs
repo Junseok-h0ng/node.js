@@ -1,0 +1,16 @@
+<% board.forEach(function(board){ %>
+<tr>
+    <form action="/process/delete/board" method="POST">
+        <th scope="row"><%= board.id %></th>
+        <td><%= board.title %></td>
+        <td><%= board.content %></td>
+        <td><%= board.date %></td>
+        <td><%= board.author %></td>
+        <td>
+            <input type="hidden" name="id" value="<%= board.id %>">
+            <input type="password" name="password" class="btn btn-sm btn-outline-secondary" placeholder="password">
+            <input type="submit" class="btn btn-sm btn-outline-secondary" value="delete">
+        </td>
+    </form>
+</tr>
+<%})%>

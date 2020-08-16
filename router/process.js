@@ -5,6 +5,23 @@ const auth = require('../lib/auth.js');
 const shortid = require('shortid');
 const db = require('../lib/mysql');
 
+
+router.post(`/insert/board`, function (req, res) {
+    var info = req.body;
+    db.insert_board(info);
+    res.redirect('/board');
+});
+router.post(`/delete/board`, function (req, res) {
+    var id = req.body.id;
+    var password = req.body.password;
+    db.board_isOwner(id, (err, board) => {
+        console.log(board[0].password, password);
+        if (board[0].password === password) {
+            db.delete_board(id);
+        }
+    });
+    res.redirect('/board');
+})
 //생성 작업
 router.post(`/create`, function (req, res) {
     var post = req.body;

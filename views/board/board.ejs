@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link href="/stylesheets/menu.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/drop_menu.css' />
+    <style>
+    </style>
+    <title>board</title>
+</head>
+
+<body>
+    <main role="main">
+        <%- include ('../part/list.ejs'); %>
+        <section class="jumbotron text-center">
+            <div class="container">
+                <h1>Board</h1>
+            </div>
+        </section>
+    </main>
+    <div class="album py-5 bg-light">
+        <div class="container">
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Author</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%- include ('./part/table.ejs'); %>
+                    <tr>
+                        <form action="/process/insert/board" method="POST">
+                            <th scope="row"></th>
+                            <td><input name="title" class="border border-info"></td>
+                            <td><input name="content" class="border border-info"></td>
+                            <td><input type="date" id="date" class="border border-info" disabled></td>
+                            <td><input name="author" class="border border-info"></td>
+                            <td>
+                                <input type="password" name="password" class="btn btn-sm btn-outline-secondary"
+                                    placeholder="password">
+                                <input type="submit" class="btn btn-sm btn-outline-secondary" value="create">
+                            </td>
+                        </form>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script>
+        document.getElementById('date').valueAsDate = new Date();
+    </script>
+</body>
+
+</html>

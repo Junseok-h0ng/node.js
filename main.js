@@ -7,6 +7,7 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const db = require('./lib/mysql');
 const flash = require('connect-flash');
+const { get } = require('./lib/db.js');
 var app = express();
 
 app.engine('html', require('ejs').renderFile);
@@ -55,12 +56,19 @@ app.get('/menu', function (req, res) {
         });
     });
 });
-app.get('/boots', function (req, res) {
-    res.render('boots', {
-        list: req.list,
-        login: auth.loginStatus(req)
+app.get('/board', function (req, res) {
+    db.list_board((err, board) => {
+        res.render('./board/board.ejs', {
+            board: board,
+            list: req.list,
+            login: auth.loginStatus(req)
+        });
     });
+
 })
+app.get('/boots', function (req, res) {
+    res.render('boots');
+});
 app.use('/page', require('./router/page'));
 app.use('/process', require('./router/process'));
 app.use('/form', require('./router/form'));
