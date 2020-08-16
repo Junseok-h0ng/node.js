@@ -15,12 +15,14 @@ router.post(`/delete/board`, function (req, res) {
     var id = req.body.id;
     var password = req.body.password;
     db.board_isOwner(id, (err, board) => {
-        console.log(board[0].password, password);
         if (board[0].password === password) {
             db.delete_board(id);
+        } else {
+            req.flash('message', 'Wrong password');
         }
+        res.redirect('/board');
     });
-    res.redirect('/board');
+
 })
 //생성 작업
 router.post(`/create`, function (req, res) {

@@ -7,7 +7,6 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const db = require('./lib/mysql');
 const flash = require('connect-flash');
-const { get } = require('./lib/db.js');
 var app = express();
 
 app.engine('html', require('ejs').renderFile);
@@ -61,7 +60,8 @@ app.get('/board', function (req, res) {
         res.render('./board/board.ejs', {
             board: board,
             list: req.list,
-            login: auth.loginStatus(req)
+            login: auth.loginStatus(req),
+            modal: req.flash().message
         });
     });
 
