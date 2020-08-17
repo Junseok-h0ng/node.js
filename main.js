@@ -73,7 +73,7 @@ app.use('/page', require('./router/page'));
 app.use('/process', require('./router/process'));
 app.use('/form', require('./router/form'));
 app.use('/create', require('./router/create'));
-
+app.use('/user', require('./router/user'));
 
 //에러처리
 // app.use(function (req, res, next) {
