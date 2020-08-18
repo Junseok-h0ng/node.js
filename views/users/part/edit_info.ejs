@@ -1,15 +1,15 @@
 <form action="/user/edit/<%= userID %>" method="POST">
     <div class="form-group">
         <label for="old_password">현재 패스워드</label>
-        <input type="password" class="form-control" id="old_password">
+        <input type="password" class="form-control" name="old_pwd">
     </div>
     <div class="form-group">
         <label for="new_password">새로운 패스워드</label>
-        <input type="password" class="form-control" id="new_password">
+        <input type="password" class="form-control" name="new_pwd">
     </div>
     <div class="form-group">
         <label for="new_password2">패스워드 재입력</label>
-        <input type="password" class="form-control" id="new_password2">
+        <input type="password" class="form-control" name="new_pwd2">
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <input type="submit" class="btn btn-primary" value="submit">
 </form>
