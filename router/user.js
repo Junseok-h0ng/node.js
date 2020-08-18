@@ -35,22 +35,23 @@ router.get('/delete/:userID', function (req, res) {
 });
 
 router.post('/delete/:userID', function (req, res) {
-    var id = req.params.userID;
+    var userID = req.params.userID;
     var pwd = req.body.pwd;
-    db.userID(id, function (err, user) {
+    db.userID(userID, function (err, user) {
         bcrypt.compare(pwd, user[0].pwd, function (err, result) {
             if (result) {
                 req.logout();
                 req.session.save(function () {
-                    db.delete_user(id);
+                    db.delete_user(userID);
                 });
                 res.redirect('/');
             } else {
                 req.flash('message', '잘못된 패스워드 입력 입니다.')
-                res.redirect(`/user/delete/${id}`)
+                res.redirect(`/user/delete/${userID}`)
             }
         });
     });
+
 });
 router.post('/edit/:userID', function (req, res) {
     var post = req.body;

@@ -82,8 +82,7 @@ router.post(`/delete/:pageID`, function (req, res) {
     var id = req.params.pageID;
     db.page(id, function (err, topic) {
         if (topic[0].user_id === req.user.id) {
-            db.delete(id, 'topic');
-            db.delete_sub(id);
+            db.delete(id);
         }
         res.redirect('/menu');
     });
