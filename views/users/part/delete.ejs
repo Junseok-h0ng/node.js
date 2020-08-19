@@ -1,7 +1,15 @@
 <form action="/user/delete/<%= userID %>" method="POST">
     <div class="form-group">
+        <% if (!disabled){ %>
+
         <label for="password">Password</label>
         <input type="password" class="form-control" name="pwd">
+
+        <% }else{ %>
+        <p>계정연동을 해제하겠습니까?</p>
+        <input type="hidden" name="pwd" value="EXTERNAL">
+        <%} %>
     </div>
     <button type="submit" class="btn btn-primary">Submit</button>
+
 </form>

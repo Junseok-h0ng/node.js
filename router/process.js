@@ -98,7 +98,6 @@ router.post(`/delete/:pageID/:subpageID`, function (req, res) {
     var pageID = req.params.pageID;
     var user = req.user.id;
     db.subpage(id, function (err, topic) {
-        console.log(topic);
         if (topic[0].user_id === user) {
             db.delete(id, 'subtopic');
         }
