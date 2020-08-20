@@ -1,23 +1,26 @@
-<% topics.forEach(function(topic){ %>
+<%  topics.forEach(function(topic){ %>
 <div class="card mb-3" style="max-width: 100%;">
     <div class="row no-gutters">
         <div class="col-md-4">
+
             <h5 class="card-title" style="text-align: center; line-height: 140px;"><%- topic.title %></h5>
+
         </div>
         <div class="col-md-8">
             <div class="card-body">
                 <%- topic.description.split('</p>',1) %>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                        onclick="location.href='/page/<%- topic.id %>'">View</a></button>
-                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                        onclick="location.href='/form/update/<%- topic.id %>'">Edit</button>
-                    <form action="/process/delete/<%- topic.id %>" method="POST">
+                <form action="/process/delete/<%- topic.id %>" method="POST">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="location.href='/page/<%- topic.id %>'">View</a></button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                            onclick="location.href='/form/update/<%- topic.id %>'">Edit</button>
                         <input type="submit" class="btn btn-sm btn-outline-secondary" value="delete">
-                    </form>
-                </div>
+                    </div>
+                </form>
                 <p class="card-text"><small class="text-muted"><%- topic.created %></small></p>
             </div>
+
         </div>
     </div>
 </div>

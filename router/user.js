@@ -2,10 +2,9 @@ const express = require('express');
 const db = require('../lib/mysql');
 const auth = require('../lib/auth');
 const bcrypt = require('bcrypt');
-const { render } = require('ejs');
 var router = express.Router();
 
-function renderPage(req, res, mod, topics) {
+function renderPage(req, res, mod, topics, subTopics) {
     var userID = req.params.userID;
     res.render('./users/user', {
         userID: userID,
@@ -14,7 +13,8 @@ function renderPage(req, res, mod, topics) {
         mod: mod,
         disabled: userType(req),
         modal: req.flash().message,
-        topics: topics
+        topics: topics,
+        subTopics: subTopics
     });
 }
 function userType(req) {
@@ -43,13 +43,14 @@ router.get('/delete/:userID', function (req, res) {
 });
 router.get('/list/:userID', function (req, res) {
     var userID = req.params.userID;
+
     db.content_user_filter(userID, (err, topics) => {
-        if (topics) {
-            renderPage(req, res, 'content_filter', topics);
-        }
+        db.sub_user_filter(topics, (err, subtopics) => {
+        });
+        renderPage(req, res, 'content_filter', topics);
     });
 
-})
+});
 
 router.post('/delete/:userID', function (req, res) {
     var userID = req.params.userID;
@@ -57,7 +58,6 @@ router.post('/delete/:userID', function (req, res) {
     if (pwd === 'EXTERNAL') { delete_user(req, res, userID); return; }
     db.userID(userID, function (err, user) {
         bcrypt.compare(pwd, user[0].pwd, function (err, result) {
-            console.log(pwd, user[0].pwd, result);
             if (result) {
                 delete_user(req, res, userID);
             } else {

@@ -15,6 +15,7 @@ router.get('/:pageID', function (req, res) {
     if (!auth.authIsOwner(req)) {
         res.redirect('/login');
     } else {
+
         db.page(pageID, function (err, topic) {
             if (topic[0].user_id === req.user.id) {
                 res.render('./crud/create', { pageID: req.params.pageID });

@@ -3,6 +3,7 @@ var router = express.Router();
 const template = require('../lib/template.js');
 const auth = require('../lib/auth.js');
 const db = require('../lib/mysql');
+const { subpage } = require('../lib/mysql');
 //수정 폼
 router.get(`/update/:pageID`, function (req, res) {
     if (!auth.authIsOwner(req)) {
@@ -27,7 +28,8 @@ router.get(`/update/:pageID`, function (req, res) {
     }
 });
 router.get(`/update/:pageID/:subpageID`, function (req, res) {
-    var subpageID = req.params.subpageID
+    var pageID = req.params.pageID;
+    var subpageID = req.params.subpageID;
     db.subpage(subpageID, function (err, topic) {
         var info = {
             title: topic[0].title,
@@ -35,7 +37,12 @@ router.get(`/update/:pageID/:subpageID`, function (req, res) {
             parent: topic[0].parent_id,
             data: topic[0].description,
         }
-        res.render('./crud/update', info);
+        if (topic[0].parent === subpageID) {
+            res.render('./crud/update', info);
+        } else {
+            res.redirect(`/page/${pageID}/${subpageID}`);
+        }
+
     });
 
 });
