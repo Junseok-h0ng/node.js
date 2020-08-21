@@ -29,7 +29,7 @@ require('./lib/passport.js')(app);
 
 //list 목록 불러오기
 app.get('*', function (req, res, next) {
-    db.list(function (topic) {
+    db.list('', function (topic) {
         req.list = template.list(topic, '');
         next();
     });
@@ -46,8 +46,12 @@ app.get('/', function (req, res) {
 app.get('/login', function (req, res) { res.render('./users/login'); });
 app.get('/register', function (req, res) { res.render('./users/register') });
 
-app.get('/menu', function (req, res) {
-    db.list(function (topic) {
+
+app.get('/menu/', function (req, res) {
+    var page = req.params.page;
+    var max = (page * 6) + (page - 1);
+    var min = max - 6;
+    db.list('limit 6', function (topic) {
         res.render('./contents/menu', {
             topic: topic,
             list: req.list,
@@ -55,11 +59,23 @@ app.get('/menu', function (req, res) {
         });
     });
 });
-app.get('/board', function (req, res) {
-    db.list_board((err, board) => {
+
+app.get('/board/:page', function (req, res) {
+    var page = req.params.page;
+    var max = page * 6;
+    var min = max - 6;
+    var prev = Number(page) - 1;
+    if (prev === 0) {
+        prev = 1;
+    }
+    var next = Number(page) + 1;
+    console.log(max, min, prev, next);
+    db.list_board(min, max, (err, board) => {
         res.render('./board/board.ejs', {
             board: board,
             list: req.list,
+            prev: prev,
+            next: next,
             login: auth.loginStatus(req),
             modal: req.flash().message
         });

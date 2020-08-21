@@ -9,7 +9,7 @@ const db = require('../lib/mysql');
 router.post(`/insert/board`, function (req, res) {
     var info = req.body;
     db.insert_board(info);
-    res.redirect('/board');
+    res.redirect('/board/1');
 });
 router.post(`/delete/board`, function (req, res) {
     var id = req.body.id;
