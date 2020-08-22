@@ -46,7 +46,9 @@ router.get('/list/:userID', function (req, res) {
 
     db.content_user_filter(userID, (err, topics) => {
         db.sub_user_filter(topics, (err, subtopics) => {
+
         });
+        console.log(topics);
         renderPage(req, res, 'content_filter', topics);
     });
 

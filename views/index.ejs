@@ -14,7 +14,7 @@
             height: 400px;
         }
     </style>
-    <title>board</title>
+    <title>index</title>
 </head>
 
 <body>
@@ -61,9 +61,7 @@
             <div class="card mb-3" style="max-width: 100%;">
                 <div class="row no-gutters">
                     <div class="col-md-4">
-
                         <h5 class="card-title" style="text-align: center; line-height: 140px;"><%-topic.title %></h5>
-
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
@@ -72,12 +70,38 @@
                                 <button type="button" class="btn btn-sm btn-outline-secondary"
                                     onclick="location.href='/page/<%-topic.id%>'">View</a></button>
                             </div>
-                            <p class="card-text"><small class="text-muted"></small></p>
+                            <p class="card-text"><small class="text-muted"><%- topic.created %></small></p>
                         </div>
-
                     </div>
                 </div>
             </div>
+
+            <h1 class="display-4" style="margin-top:20px">Board</h1><button type="button"
+                class="btn btn-outline-secondary" onclick="location.href='/board/1'">More</button>
+            <hr class="my-4">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Author</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% board.forEach(function(board){ %>
+                    <tr>
+                        <th scope="row"><%= board.id %></th>
+                        <td><%= board.title %></td>
+                        <td><%= board.content %></td>
+                        <td><%= board.date %></td>
+                        <td><%= board.author %></td>
+                        <% }); %>
+                    </tr>
+                </tbody>
+            </table>
 
 
         </div>
