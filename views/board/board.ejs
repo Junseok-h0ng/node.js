@@ -25,7 +25,18 @@
     </main>
     <div class="album py-5 bg-light">
         <div class="container">
-
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    filter
+                </button>
+                <div class="dropdown-menu">
+                    <div class="dropdown">
+                        <a class="dropdown-item" href="/board/<%-current%>">Desc</a>
+                        <a class="dropdown-item" href="/board/<%-current%>/asc">Asc</a>
+                    </div>
+                </div>
+            </div>
             <table class="table table-striped">
                 <thead>
                     <tr>
