@@ -54,29 +54,32 @@
                     <span class="sr-only">Next</span>
                 </a>
             </div>
-            contents
+
+            <h1 class="display-4" style="margin-top:20px">contents</h1><button type="button"
+                class="btn btn-outline-secondary" onclick="location.href='/menu/1'">More</button>
+            <hr class="my-4">
             <div class="card mb-3" style="max-width: 100%;">
                 <div class="row no-gutters">
                     <div class="col-md-4">
 
-                        <h5 class="card-title" style="text-align: center; line-height: 140px;">title</h5>
+                        <h5 class="card-title" style="text-align: center; line-height: 140px;"><%-topic.title %></h5>
 
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                            <p>description</p>
-                            <form action="/process/delete/" method="POST">
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary"
-                                        onclick="location.href='/page/'">View</a></button>
-                                </div>
-                            </form>
+                            <%- topic.description %>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                    onclick="location.href='/page/<%-topic.id%>'">View</a></button>
+                            </div>
                             <p class="card-text"><small class="text-muted"></small></p>
                         </div>
 
                     </div>
                 </div>
             </div>
+
+
         </div>
 
     </div>
