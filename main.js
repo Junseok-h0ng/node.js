@@ -37,15 +37,12 @@ app.get('*', function (req, res, next) {
 //메인인덱스 출력
 app.get('/', function (req, res) {
     db.list_filter('desc', 0, 1, (topic) => {
-        db.list_board(0, 3, 'desc', (err, board) => {
-            console.log(board);
-            res.render('index', {
-                title: 'IndexPage',
-                list: req.list,
-                login: auth.loginStatus(req),
-                topic: topic[0],
-                board: board
-            })
+        console.log(topic);
+        res.render('index', {
+            title: 'IndexPage',
+            list: req.list,
+            login: auth.loginStatus(req),
+            topic: topic[0]
         });
     });
 
