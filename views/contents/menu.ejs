@@ -8,9 +8,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link href="/stylesheets/menu.css" rel="stylesheet">
-    <link rel='stylesheet' href='/stylesheets/drop_menu.css' />
+    <link rel='stylesheet' href='/stylesheets/drop_menu.css'>
     <style>
-        <style>.bd-placeholder-img {
+        .bd-placeholder-img {
             font-size: 1.125rem;
             text-anchor: middle;
             -webkit-user-select: none;
@@ -28,34 +28,31 @@
 </head>
 
 <body>
-
     <main role="main">
-        <%- include ('../part/list.ejs'); %>
+        <%- include('../part/list.ejs'); %>
         <section class="jumbotron text-center">
             <div class="container">
                 <h1>Content</h1>
             </div>
         </section>
-
-        <div class="album py-5 bg-light">
-            <div class="container">
-                <div class="btn-group dropright">
-                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false">
-                        filter
-                    </button>
-                    <div class="dropdown-menu">
-                        <div class="dropdown">
-                            <a class="dropdown-item" href="/menu/<%-current%>">Desc</a>
-                            <a class="dropdown-item" href="/menu/<%-current%>/asc">Asc</a>
-                        </div>
+    </main>
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    filter
+                </button>
+                <div class="dropdown-menu">
+                    <div class="dropdown">
+                        <a class="dropdown-item" href="/menu/<%-current%>">Desc</a>
+                        <a class="dropdown-item" href="/menu/<%-current%>/asc">Asc</a>
                     </div>
                 </div>
-                <%- include ('../part/content.ejs'); %>
-                <button type="button" class="btn btn-sm btn-outline-secondary"
-                    onclick="location.href='/create'">Create</a></button>
             </div>
-
+            <%- include('../part/content.ejs'); %>
+            <button type="button" class="btn btn-sm btn-outline-secondary"
+                onclick="location.href='/create'">Create</a></button>
         </div>
         <nav aria-label="Page navigation example">
             <ul class="pagination justify-content-center">
@@ -67,20 +64,20 @@
                 </li>
             </ul>
         </nav>
-    </main>
+        </main>
 
-    <footer class=" text-muted">
+        <footer class=" text-muted">
 
-    </footer>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"></script>
+        </footer>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+            crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+            crossorigin="anonymous"></script>
 
 
 </html>

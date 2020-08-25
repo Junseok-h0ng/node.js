@@ -15,6 +15,7 @@ app.set('views', './views');
 
 app.use(cookieParser());
 app.use(express.static('public'));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
     secret: 'asdfagasg',
@@ -34,7 +35,7 @@ app.get('*', function (req, res, next) {
         next();
     });
 });
-//메인인덱스 출력
+// 메인인덱스 출력
 app.get('/', function (req, res) {
     db.list_board(0, 3, 'desc', (err, board) => {
         db.list_filter('desc', 0, 1, (topic) => {
@@ -48,6 +49,7 @@ app.get('/', function (req, res) {
         })
     });
 });
+
 
 app.get('/login', function (req, res) { res.render('./users/login'); });
 app.get('/register', function (req, res) { res.render('./users/register') });
@@ -72,4 +74,6 @@ app.use('/menu', require('./router/menu'));
 // app.use(function (err, req, res, next) {
 //     res.status(500).send("파일 없음");
 // })
-app.listen(8000);
+var port = process.env.PORT || 80;
+const hostname = '192.168.35.243';
+app.listen(port, hostname);
