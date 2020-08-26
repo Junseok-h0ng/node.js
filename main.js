@@ -74,6 +74,15 @@ app.use('/menu', require('./router/menu'));
 // app.use(function (err, req, res, next) {
 //     res.status(500).send("파일 없음");
 // })
-var port = process.env.PORT || 80;
+var fs = require('fs');
+var https = require('https');
+var option = {
+    ca: fs.readFileSync('./cert/ca_bundle.crt'),
+    key: fs.readFileSync('./cert/private.key'),
+    cert: fs.readFileSync('./cert/certificate.crt')
+}
+
+var port = 80;
 const hostname = '192.168.35.243';
+https.createServer(option, app).listen(443, hostname);
 app.listen(port, hostname);
