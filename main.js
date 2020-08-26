@@ -55,7 +55,7 @@ app.get('/login', function (req, res) { res.render('./users/login'); });
 app.get('/register', function (req, res) { res.render('./users/register') });
 
 
-
+app.use('/crawlingTest', require('./lib/crawling'));
 
 app.get('/boots', function (req, res) {
     res.render('boots');
