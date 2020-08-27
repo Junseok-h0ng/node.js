@@ -7,6 +7,7 @@ const session = require('express-session');
 const FileStore = require('session-file-store')(session);
 const db = require('./lib/mysql');
 const flash = require('connect-flash');
+const crawling = require('./lib/crawling');
 var app = express();
 
 app.engine('html', require('ejs').renderFile);
@@ -35,16 +36,22 @@ app.get('*', function (req, res, next) {
         next();
     });
 });
+
+
 // 메인인덱스 출력
 app.get('/', function (req, res) {
+
     db.list_board(0, 3, 'desc', (err, board) => {
         db.list_filter('desc', 0, 1, (topic) => {
-            res.render('index', {
-                title: 'IndexPage',
-                list: req.list,
-                login: auth.loginStatus(req),
-                topic: topic[0],
-                board: board
+            crawling.keyword((err, keyword) => {
+                res.render('index', {
+                    title: 'IndexPage',
+                    list: req.list,
+                    login: auth.loginStatus(req),
+                    topic: topic[0],
+                    board: board,
+                    crawling: keyword
+                });
             });
         })
     });
@@ -53,9 +60,6 @@ app.get('/', function (req, res) {
 
 app.get('/login', function (req, res) { res.render('./users/login'); });
 app.get('/register', function (req, res) { res.render('./users/register') });
-
-
-app.use('/crawlingTest', require('./lib/crawling'));
 
 app.get('/boots', function (req, res) {
     res.render('boots');
